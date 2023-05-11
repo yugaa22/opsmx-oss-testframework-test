@@ -332,7 +332,7 @@ jobs:
             imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
             echo "igor=$imageName" >> $GITHUB_OUTPUT
 
-            echo "myoutput='hello world'" >> $GITHUB_OUTPUT
+            echo "myoutput=$imageName" >> $GITHUB_OUTPUT
             
 
   build-kayenta:
