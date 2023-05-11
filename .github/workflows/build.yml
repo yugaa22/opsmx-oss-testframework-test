@@ -63,8 +63,8 @@ jobs:
         ref: refs/heads/OES-1.30.x-master-adhoc
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
         cache: 'gradle'
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
