@@ -477,6 +477,6 @@ jobs:
     steps:
     - run: | 
             echo "hiii"
-            echo ${{needs.build-igor.outputs.igorimg}}
+            echo ${{needs.build-igor.outputs}}
             
             
