@@ -11,10 +11,263 @@ env:
   CONTAINER_REGISTRY: quay.io/opsmxpublic
 
 jobs:
+
+  build-clouddriver:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx clouddriver repo
+      uses: actions/checkout@v3
+      with:
+        repository: opsmx/clouddriver-oes
+        ref: refs/heads/OES-1.30.x-master-adhoc
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"ubi8-clouddriver-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true clouddriver-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-fips
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+
+
+
+  build-deck:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx deck repo
+      uses: actions/checkout@v3
+      with:
+        repository: opsmx/deck-oes
+        ref: refs/heads/OES-1.30.x-master-adhoc
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"ubi8-deck-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      run: |
+           cp docker/ubi8/setupapache2.sh docker/setup-apache2.sh
+           cp docker/ubi8/runapache2.sh docker/run-apache2.sh
+  
+             # To remove Special characters
+             sed -i 's/\r//' docker/setup-apache2.sh
+             sed -i 's/\r//' docker/run-apache2.sh
+             
+             ./gradlew build --no-daemon -PskipTests 
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-fips
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+
+
+  build-echo:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx echo repo
+      uses: actions/checkout@v3
+      with:
+        repository: opsmx/echo-oes
+        ref: refs/heads/OES-1.30.x-master-adhoc
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"ubi8-echo-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true echo-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-fips
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+
+
+  build-fiat:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx fiat repo
+      uses: actions/checkout@v3
+      with:
+        repository: opsmx/fiat-oes
+        ref: refs/heads/OES-1.30.x-master-adhoc
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"ubi8-fiat-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true fiat-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-fips
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+
+
+
+  build-front50:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx front50 repo
+      uses: actions/checkout@v3
+      with:
+        repository: opsmx/front50-oes
+        ref: refs/heads/OES-1.30.x-master-adhoc
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"ubi8-front50-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true front50-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-fips
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+
+
+  build-gate:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx gate repo
+      uses: actions/checkout@v3
+      with:
+        repository: opsmx/gate-oes
+        ref: refs/heads/OES-1.30.x-master-adhoc
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"ubi8-gate-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true gate-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        build-args: |
+            CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.2-rc1
+        file: docker/ubi8/Dockerfile-fips
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+
+
   build-igor:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout OpsMx Igor repo
+    - name: Checkout OpsMx igor repo
       uses: actions/checkout@v3
       with:
         repository: opsmx/igor-oes
@@ -31,13 +284,10 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-spin-igor"
-          echo ::set-output name=VERSION::"test-$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"ubi8-igor-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
-      run: |
-             git log -1
-             
-             ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
@@ -52,4 +302,128 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
- 
+
+
+  build-kayenta:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx kayenta repo
+      uses: actions/checkout@v3
+      with:
+        repository: opsmx/kayenta-oes
+        ref: refs/heads/OES-1.30.x-master-adhoc
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"ubi8-kayenta-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true kayenta-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-fips
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+
+
+
+  build-orca:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx orca repo
+      uses: actions/checkout@v3
+      with:
+        repository: opsmx/orca-oes
+        ref: refs/heads/OES-1.30.x-master-adhoc
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"ubi8-orca-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true orca-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        build-args: |
+            CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.2-rc1
+        file: docker/ubi8/Dockerfile-fips
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+
+
+
+  build-rosco:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx rosco repo
+      uses: actions/checkout@v3
+      with:
+        repository: opsmx/rosco-oes
+        ref: refs/heads/OES-1.30.x-master-adhoc
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"ubi8-rosco-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true rosco-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-fips
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+
