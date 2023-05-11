@@ -331,7 +331,7 @@ jobs:
             #imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
             imageName=quay.io/opsmxpublic/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
 
-            IMAGE_NAME=$(docker inspect --format='{{index .RepoTags 0}}' my-image)
+            IMAGE_NAME=$(docker inspect --format='{{index .RepoTags 0}}' "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}")
             echo "::set-output name=image_name::$IMAGE_NAME"
             
                         echo "igor=$image_name" >> $GITHUB_OUTPUT
