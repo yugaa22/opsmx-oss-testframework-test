@@ -14,6 +14,7 @@ jobs:
 
   build-clouddriver:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx clouddriver repo
       uses: actions/checkout@v3
@@ -95,7 +96,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Dockerfile
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -103,6 +104,7 @@ jobs:
 
   build-echo:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx echo repo
       uses: actions/checkout@v3
@@ -143,6 +145,7 @@ jobs:
 
   build-fiat:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx fiat repo
       uses: actions/checkout@v3
@@ -184,6 +187,7 @@ jobs:
 
   build-front50:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx front50 repo
       uses: actions/checkout@v3
@@ -224,6 +228,7 @@ jobs:
 
   build-gate:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx gate repo
       uses: actions/checkout@v3
@@ -266,6 +271,7 @@ jobs:
 
   build-igor:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx igor repo
       uses: actions/checkout@v3
@@ -347,6 +353,7 @@ jobs:
 
   build-orca:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx orca repo
       uses: actions/checkout@v3
