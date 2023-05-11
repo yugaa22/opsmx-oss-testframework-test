@@ -475,6 +475,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-igor
     steps:
-    - run: echo ${{needs.build-igor.outputs.igorimg}}
+    - run: echo ${{ needs.build-igor.outputs.igorimg }}
             
             
