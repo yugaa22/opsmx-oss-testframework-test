@@ -288,7 +288,7 @@ jobs:
 
   build-igor:
     outputs:
-      myoutput: ${{ steps.getimg.outputs.igor }}
+      igor: ${{ steps.get-build-name.outputs.igor }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout OpsMx igor repo
@@ -326,14 +326,10 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-    - name: get-build-name
-      id: getimg
+    - id: get-build-name
       run: |
             imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
-             echo $imageName
-            echo "igor1=$imageName" >> $GITHUB_OUTPUT
-
-            echo "igor=testing" >> $GITHUB_OUTPUT
+            echo "igor=$imageName" >> $GITHUB_OUTPUT
             
 
   build-kayenta:
@@ -478,8 +474,6 @@ jobs:
     needs: build-igor
     steps:
     - run: | 
-
-            echo ${{needs.build-igor.outputs}}
-            echo ${{ needs.build-igor.outputs.myoutput }}
+            echo ${{ needs.build-igor.outputs.igor }}
             
             
