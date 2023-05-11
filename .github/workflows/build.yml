@@ -336,7 +336,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       kayentaimg: ${{ steps.get-build-name.outputs.kayenta }}
-    if: ${{ true }}
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx kayenta repo
       uses: actions/checkout@v3
@@ -471,10 +471,11 @@ jobs:
             echo "rosco=$imageName" >> $GITHUB_OUTPUT
   outputs:
     runs-on: ubuntu-latest
-    needs: [build-igor,build-kayenta] #[build-clouddriver,build-deck,build-echo,build-fiat,build-front50,build-gate,build-igor,build-kayenta,build-orca,build-rosco]
+    needs: build-igor #[build-clouddriver,build-deck,build-echo,build-fiat,build-front50,build-gate,build-igor,build-kayenta,build-orca,build-rosco]
     steps:
     - run: | 
-            echo ""
+            echo ${{needs.build-igor.outputs.igorimg}}
+            
             echo "igor=${{needs.build-igor.outputs.igorimg}} " 
             
-            echo "kayenta=${{needs.build-kayenta.outputs.kayentaimg}} " 
+            
