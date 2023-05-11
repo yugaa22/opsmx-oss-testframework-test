@@ -11,7 +11,6 @@ env:
   CONTAINER_REGISTRY: quay.io/opsmxpublic
 
 jobs:
-
   build-clouddriver:
     runs-on: ubuntu-latest
     if: ${{ false }}
@@ -51,11 +50,14 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-
-
-
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "clouddriver=$imageName" >> $GITHUB_OUTPUT
+            
   build-deck:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx deck repo
       uses: actions/checkout@v3
@@ -100,7 +102,10 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "deck=$imageName" >> $GITHUB_OUTPUT
 
   build-echo:
     runs-on: ubuntu-latest
@@ -141,7 +146,10 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "echo=$imageName" >> $GITHUB_OUTPUT
 
   build-fiat:
     runs-on: ubuntu-latest
@@ -182,7 +190,10 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "fiat=$imageName" >> $GITHUB_OUTPUT
 
 
   build-front50:
@@ -224,7 +235,10 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "front50=$imageName" >> $GITHUB_OUTPUT
 
   build-gate:
     runs-on: ubuntu-latest
@@ -267,11 +281,16 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "gate=$imageName" >> $GITHUB_OUTPUT
 
   build-igor:
     runs-on: ubuntu-latest
-    if: ${{ false }}
+    if: ${{ true }} 
+    outputs:
+      igorimg: ${{ steps.get-build-name.outputs.igor }}
     steps:
     - name: Checkout OpsMx igor repo
       uses: actions/checkout@v3
@@ -308,10 +327,16 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "igor=$imageName" >> $GITHUB_OUTPUT
 
   build-kayenta:
     runs-on: ubuntu-latest
+    outputs:
+      kayentaimg: ${{ steps.get-build-name.outputs.kayenta }}
+    if: ${{ true }}
     steps:
     - name: Checkout OpsMx kayenta repo
       uses: actions/checkout@v3
@@ -348,7 +373,10 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "kayenta=$imageName" >> $GITHUB_OUTPUT
 
 
   build-orca:
@@ -392,11 +420,15 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "orca=$imageName" >> $GITHUB_OUTPUT
 
 
   build-rosco:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx rosco repo
       uses: actions/checkout@v3
@@ -433,4 +465,16 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "rosco=$imageName" >> $GITHUB_OUTPUT
+  outputs:
+    runs-on: ubuntu-latest
+    needs: [build-igor,build-kayenta] #[build-clouddriver,build-deck,build-echo,build-fiat,build-front50,build-gate,build-igor,build-kayenta,build-orca,build-rosco]
+    steps:
+    - run: | 
+            echo ""
+            echo "igor=${{needs.build-igor.outputs.igorimg}} " 
+            
+            echo "kayenta=${{needs.build-kayenta.outputs.kayentaimg}} " 
