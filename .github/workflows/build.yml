@@ -328,9 +328,11 @@ jobs:
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
     - id: get-build-name
+      name: get-build-name
       run: |
             imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
             echo "igor=$imageName" >> $GITHUB_OUTPUT
+            
 
   build-kayenta:
     runs-on: ubuntu-latest
