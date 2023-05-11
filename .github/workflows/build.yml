@@ -287,10 +287,9 @@ jobs:
            # echo "gate=$imageName" >> $GITHUB_OUTPUT
 
   build-igor:
-    runs-on: ubuntu-latest
-    #if: ${{ true }} 
     outputs:
-      igorimg: ${{ steps.getimg.outputs.igor }}
+      myoutput: ${{ steps.getimg.outputs.myoutput }}
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout OpsMx igor repo
       uses: actions/checkout@v3
@@ -327,11 +326,13 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-    - id: getimg
-      name: get-build-name
+    - name: get-build-name
+      id: getimg
       run: |
             imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
             echo "igor=$imageName" >> $GITHUB_OUTPUT
+
+            echo "myoutput='hello world'" >> $GITHUB_OUTPUT
             
 
   build-kayenta:
@@ -476,7 +477,8 @@ jobs:
     needs: build-igor
     steps:
     - run: | 
-            echo "hiii"
+
             echo ${{needs.build-igor.outputs}}
+            echo ${{ needs.build-igor.outputs.myoutput }}
             
             
