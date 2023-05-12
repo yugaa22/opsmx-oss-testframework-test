@@ -10,6 +10,9 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
+defaults:
+  run:
+    working-directory: opsmx-oss-testframework/terraform-Script/aws/eks
 
 permissions:
   contents: read
