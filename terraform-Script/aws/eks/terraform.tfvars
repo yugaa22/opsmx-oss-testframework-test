@@ -1,8 +1,7 @@
-aws_access_key = "your access key"
-aws_secret_key = "your secret key"
-
+#aws_access_key = "your access key"
+#aws_secret_key = "your secret key"
 region                   = "us-east-2"
-availability_zones_count = 1
+availability_zones_count = 2
 
 project = "appleosstesting"
 
