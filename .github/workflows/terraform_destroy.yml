@@ -15,7 +15,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 jobs:
   terraform_destroy:
-    name: 'Terraform'
+    name: 'Terraform Destroy'
     runs-on: ubuntu-latest
     environment: production
 
