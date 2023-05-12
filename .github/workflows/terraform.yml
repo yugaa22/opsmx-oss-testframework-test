@@ -1,7 +1,4 @@
-
-
 name: 'Terraform'
-
 on:
   workflow_run:
     workflows: ["Workflow 1"]
