@@ -12,7 +12,7 @@ on:
   pull_request:
 defaults:
   run:
-    working-directory: /opsmx-oss-testframework/terraform-Script/aws/eks
+    working-directory: terraform-Script/aws/eks
 
 permissions:
   contents: read
