@@ -1,4 +1,4 @@
-name: 'Terraform infra'
+name: 'Terraform Infra'
 on:
   workflow_run:
     workflows: ["Workflow 1"]
@@ -15,7 +15,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 jobs:
   terraforminfra:
-    name: 'Terraform'
+    name: 'Terraform Infra'
     runs-on: ubuntu-latest
     environment: production
 
