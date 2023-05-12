@@ -5,7 +5,7 @@ on:
     types:
       - completed
   push:
-    branches: [ "main" ]
+    branches: [ "main1" ]
   pull_request:
 
 permissions:
