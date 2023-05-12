@@ -5,7 +5,7 @@ on:
     types:
       - completed
   push:
-    branches: [ "main" ]
+    branches: [ "main1" ]
   pull_request:
 
 permissions:
@@ -14,7 +14,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 jobs:
-  terraform:
+  terraformsetup:
     name: 'Terraform'
     runs-on: ubuntu-latest
     environment: production
@@ -50,3 +50,7 @@ jobs:
       run: |
            cd terraform-Script/aws/eks
            terraform apply -auto-approve -input=false
+           ls -lta terraform-Script/aws/eks
+           cat  terraform-Script/aws/eks/kubefile
+           
+           
