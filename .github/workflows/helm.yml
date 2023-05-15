@@ -17,10 +17,10 @@ jobs:
         with:
           helm-version: '3.6.3'  # Specify the version of Helm you want to use   
       - name: Get repositories
-        uses: hiberbee/github-action-helm@1.5.0
-        with:
-          #helm: repo list
-          repository-config: repositories.yaml
+        #uses: hiberbee/github-action-helm@1.5.0
+        uses: wahyd4/kubectl-helm-action@master
+        #with:
+         # repository-config: repositories.yaml
       - name: Install Helm chart
         run: |
             helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
@@ -31,5 +31,5 @@ jobs:
            
             helm install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s  --create-namespace # Replace `my-release` with the desired release name and `my-repo/my-chart` with the chart reference
         env:
-          KUBE_CONFIG_DATA: '${{ secrets.KUBECONFIG }}'
+          KUBECONFIG: '${{ secrets.KUBECONFIG }}'
 
