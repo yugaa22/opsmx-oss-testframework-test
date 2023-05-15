@@ -29,11 +29,11 @@ jobs:
           helm repo add stable https://charts.helm.sh/stable
           helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
           helm repo update
-          kubectl get ns
+         
 
       - name: Install Helm chart
         run: |
           
-          helm upgrade --install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s --create-namespace
+          helm upgrade --install oss-spin-yuga spinnaker/spinnaker -n opsmx-oss --timeout 600s --create-namespace
 
 
