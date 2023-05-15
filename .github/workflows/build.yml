@@ -253,7 +253,7 @@ jobs:
   build-gate:
     runs-on: ubuntu-latest    
     outputs:
-      igor: ${{ steps.get-build-name.outputs.igor }}
+      gate: ${{ steps.get-build-name.outputs.gate }}
     if: ${{ true }}
     steps:
     - name: Checkout OpsMx gate repo
@@ -494,7 +494,7 @@ jobs:
       uses: actions/checkout@v3
     - run: | 
           touch bom values.yml
-          echo clouddriver: ${{ needs.build-igor.outputs.clouddriver }} > bom
+          echo clouddriver: ${{ needs.build-clouddriver.outputs.clouddriver }} > bom
           echo deck: ${{ needs.build-deck.outputs.deck }} >> bom
           echo echo: ${{ needs.build-echo.outputs.echo }} >> bom
           echo fiat: ${{ needs.build-fiat.outputs.fiat }} >> bom
