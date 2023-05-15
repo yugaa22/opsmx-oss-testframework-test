@@ -19,3 +19,19 @@ jobs:
 
       - name: List Namespaces
         run: kubectl get namespaces
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          helm-version: '3.6.3'  # Specify the version of Helm you want to use 
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+      - name: Install Helm chart
+        run: |
+            helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
+            helm repo update
+             
+             
+             kubectl get ns
+           
+            helm install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s  --create-namespace # Replace `my-release` with the desired release name and `my-repo/my-chart` with the chart reference
+
