@@ -8,5 +8,5 @@ repositories:
     keyFile: ""   # optional
     password: ""  # optional
     username: ""  # optional
-  - name: opsmx
+  - name: spinnaker
     url: https://opsmx.github.io/spinnaker-helm
