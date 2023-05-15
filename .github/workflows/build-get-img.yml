@@ -1,12 +1,7 @@
 
 name: Java CI with Gradle1
 on:
-  workflow_call:
-    outputs:
-      igorimage:
-        description: "The first output string"
-        value: ${{ jobs.example_job.outputs.output1 }}
-        
+
     
   push:
     branches:
@@ -39,7 +34,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::${GITHUB_REPOSITORY##*/} # ubi8-spin-igor
+          echo ::set-output name=REPO::ubi8-spin-igor
           echo ::set-output name=VERSION::"yuga-$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       env:
