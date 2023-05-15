@@ -20,12 +20,12 @@ jobs:
     - name: Checkout OpsMx Igor repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/igor
-        ref: refs/heads/master
+        repository: opsmx/igor-oes
+        ref: refs/heads/OES-1.30.x-master-adhoc
     - uses: actions/setup-java@v3
       with:
-        distribution: zulu
-        java-version: 11
+        distribution: temurin
+        java-version: 17
         cache: 'gradle'
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
@@ -50,7 +50,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Igor-Dockerfile
+        file: docker/ubi8/Dockerfile-fips
         push: false
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
