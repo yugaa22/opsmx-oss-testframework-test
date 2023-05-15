@@ -25,7 +25,7 @@ jobs:
         run: |
             helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
             helm repo update
-             #kubectl config get-contexts 
+             
              
              kubectl get ns
            
