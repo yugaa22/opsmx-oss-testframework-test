@@ -25,15 +25,21 @@ jobs:
         with:
           helm-version: '3.6.3'  # Specify the version of Helm you want to use 
           kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Install Helm
+        run: |
+          curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      - name: Add Helm repository
+        run: |
+          helm repo add stable https://charts.helm.sh/stable
+          helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
+          helm repo update
+          kubectl get ns
+
       - name: Install Helm chart
         run: |
-            kubectl get ns
-            helm init
-            helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
-            helm repo update
-             
-             
-           
-           
-            helm install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s  --create-namespace # Replace `my-release` with the desired release name and `my-repo/my-chart` with the chart reference
+          
+          helm upgrade --install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s --create-namespace
+
 
