@@ -2,7 +2,7 @@ name: Setup Spinnaker
 on:
   push:
     branches:
-      - maintest
+      - main
 
 jobs:
   OpsMx-Spinnaker:
