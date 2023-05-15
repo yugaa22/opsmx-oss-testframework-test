@@ -1,0 +1,12 @@
+apiVersion: v2
+
+repositories:
+  - name: stable
+    url: https://kubernetes-charts.storage.googleapis.com
+    caFile: ""    # optional
+    certFile: ""  # optional
+    keyFile: ""   # optional
+    password: ""  # optional
+    username: ""  # optional
+  - name: opsmx
+    url: https://opsmx.github.io/spinnaker-helm
