@@ -72,7 +72,9 @@ jobs:
                       kubectl get ns --kubeconfig=kubefile
                       
                       echo "testing ns"
+                      
+                      config=${{ secrets.KUBECONFIGTEST }} | base64 -d
            
-           kubectl get ns --kubeconfig=${{ secrets.KUBECONFIGTEST }}
+           kubectl get ns --kubeconfig=config
            
            
