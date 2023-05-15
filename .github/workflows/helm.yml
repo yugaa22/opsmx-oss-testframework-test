@@ -21,12 +21,13 @@ jobs:
       - name: Get repositories
         uses: hiberbee/github-action-helm@1.5.0
         with:
-          helm: repo list
+          #helm: repo list
           repository-config: repositories.yaml
 
 
       - name: Install Helm chart
         run: |
+            helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
             helm repo update
             helm install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s  --create-namespace # Replace `my-release` with the desired release name and `my-repo/my-chart` with the chart reference
 
