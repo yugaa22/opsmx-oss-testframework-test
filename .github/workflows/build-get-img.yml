@@ -101,7 +101,7 @@ jobs:
       with:
         registry: quay.io
         username: ksrinimba
-        password: ${{ secrets.GAR_JSON_KEY }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         #if: startsWith(github.repository, ‘yugaa22/‘)
