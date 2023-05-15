@@ -479,6 +479,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-igor,build-echo]
     steps:
+    - name: Check out repository code
+      uses: actions/checkout@v3
     - run: | 
           touch bom
           echo igor: ${{ needs.build-igor.outputs.igor }} > bom
