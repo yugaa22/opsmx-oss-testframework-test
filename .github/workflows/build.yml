@@ -480,7 +480,16 @@ jobs:
     needs: [build-igor,build-echo]
     steps:
     - run: | 
-            echo ${{ needs.build-igor.outputs.igor }}
-            echo ${{ needs.build-echo.outputs.echo }}
+          touch bom
+          echo igor: ${{ needs.build-igor.outputs.igor }} > bom
+          echo echo: ${{ needs.build-echo.outputs.echo }} >> bom
+          cat bom
+          git config --global user.email "yugaa22@gmail.com"
+          git config --global user.name "yugaa22"
+          git add .
+          git commit -m "Master images"
+          git push
+      env:
+         GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
             
             
