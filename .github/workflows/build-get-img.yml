@@ -3,7 +3,7 @@ name: Build and Push
 on: 
   push:
     branches:
-    - maintest
+    - main
     - release-*
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
@@ -40,7 +40,7 @@ jobs:
       uses: docker/login-action@v1
       with:
         registry: quay.io
-        username: ksrinimba
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
       uses: docker/build-push-action@v2
