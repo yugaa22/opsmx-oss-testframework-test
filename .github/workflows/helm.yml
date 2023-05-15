@@ -16,11 +16,11 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
-          helm-version: '3.x'  # Specify the version of Helm you want to use
+          helm-version: '3.6.3'  # Specify the version of Helm you want to use
 
       - name: Add Helm repository
         run: |
-             helm init
+             #helm init
              echo "adding opsmx repo"
              helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/  # Replace <repository_url> with the actual URL of your Helm repository
 
