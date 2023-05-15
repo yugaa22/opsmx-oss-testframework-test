@@ -12,24 +12,20 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
-          helm-version: '3.6.3'  # Specify the version of Helm you want to use
-      
+          helm-version: '3.6.3'  # Specify the version of Helm you want to use   
       - name: Get repositories
         uses: hiberbee/github-action-helm@1.5.0
         with:
           #helm: repo list
           repository-config: repositories.yaml
-
-
       - name: Install Helm chart
         run: |
             helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
             helm repo update
+            kubectl get no
             helm install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s  --create-namespace # Replace `my-release` with the desired release name and `my-repo/my-chart` with the chart reference
-
-    env:
-        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+        env:
+          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
