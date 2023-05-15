@@ -29,7 +29,6 @@ jobs:
              
              kubectl get ns
            
-            
             helm install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s  --create-namespace # Replace `my-release` with the desired release name and `my-repo/my-chart` with the chart reference
         env:
           KUBECONFIG: '${{ secrets.KUBECONFIG }}'
