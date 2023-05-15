@@ -15,7 +15,7 @@ jobs:
       - name: Set up Kubernetes
         uses: azure/k8s-set-context@v1
         with:
-          kubeconfig: ${{ secrets.KUBECONFIG }}
+          kubeconfig: ${{ secrets.KUBECONFIGTEST }}
 
       - name: Install Helm
         run: |
