@@ -109,6 +109,8 @@ jobs:
 
   build-echo:
     runs-on: ubuntu-latest
+    outputs:
+      echo: ${{ steps.get-build-name.outputs.echo }}
     if: ${{ true }}
     steps:
     - name: Checkout OpsMx echo repo
