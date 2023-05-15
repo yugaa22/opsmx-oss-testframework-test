@@ -1,75 +1,26 @@
 
-name: Gradle Compile ,Docker buid and push 
+name: Java CI with Gradle1
 on:
   workflow_call:
+    outputs:
+      igorimage:
+        description: "The first output string"
+        value: ${{ jobs.example_job.outputs.output1 }}
+        
+    
   push:
     branches:
     - main
+    - release-*
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
   CONTAINER_REGISTRY: quay.io/opsmxpublic
 
 jobs:
-  build-igor:
-    outputs:
-      igor: ${{ steps.get-build-name.outputs.igor }}
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout OpsMx igor repo
-      uses: actions/checkout@v3
-      with:
-        repository: opsmx/igor-oes
-        ref: refs/heads/OES-1.30.x-master-adhoc
-    - uses: actions/setup-java@v3
-      with:
-        distribution: temurin
-        java-version: 17
-        cache: 'gradle'
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    - name: Prepare build variables
-      id: build_variables
-      run: |
-          echo ::set-output name=REPO::"ubi8-igor-cve"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
-    - name: Build
-      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
-    - name: Login to Quay
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_KEY }}
-    - name: dockerBuildpush
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        file: docker/ubi8/Dockerfile-fips
-        push: false
-        tags: |
-          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-    - id: get-build-name
-      run: |
-            #imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
-            imageName=quay.io/opsmxpublic/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
-
-            echo "::set-output name=igor::$imageName"
-            
-                        echo "igor=$imageName" >> $GITHUB_OUTPUT
-       
-  outputs:
-    runs-on: ubuntu-latest
-    needs: build-igor
-    steps:
-    - run: | 
-            echo ${{ needs.build-igor.outputs.igor }}
-            
   build-igor1:
     runs-on: ubuntu-latest
     outputs:
-      igorimg: ${{ steps.get-build-name.output.igor }}
+      igorimg: ${{ steps.get-build-name.outputs.igor }}
     steps:
     - name: Checkout OpsMx Igor repo
       uses: actions/checkout@v3
@@ -116,10 +67,9 @@ jobs:
       run: |
             imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
             echo "igor=$imageName" >> $GITHUB_OUTPUT
-  output:
+  outputs:
     runs-on: ubuntu-latest
     needs: build-igor1
     steps:
     - run: echo ${{needs.build-igor1.outputs.igorimg}}
-            
-            
+     
