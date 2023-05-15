@@ -67,6 +67,8 @@ jobs:
            }
            EOF
            
-           kubectl get ns
+           echo "k get nodes"
+           
+           kubectl get ns --KUBECONFIG=${{ secrets.KUBECONFIG }}
            
            
