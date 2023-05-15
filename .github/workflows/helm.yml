@@ -1,11 +1,11 @@
-name: List Namespaces
+name: Setup Spinnaker
 on:
   push:
     branches:
-      - main
+      - maintest
 
 jobs:
-  list-namespaces:
+  OpsMx-Spinnaker:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,9 +17,6 @@ jobs:
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
 
-      - name: List Namespaces
-        run: kubectl get namespaces
-
       - name: Install Helm
         run: |
           curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
@@ -30,10 +27,9 @@ jobs:
           helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
           helm repo update
          
-
-      - name: Install Helm chart
+      - name: Install OpsMx Helm chart
         run: |
           
-          helm upgrade --install oss-spin-yuga spinnaker/spinnaker -n opsmx-oss --timeout 600s --create-namespace
+          #helm upgrade --install oss-spin spinnaker/spinnaker -n opsmx-oss-yuga --timeout 600s --create-namespace
 
 
