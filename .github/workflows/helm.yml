@@ -19,7 +19,9 @@ jobs:
           helm-version: '3.x'  # Specify the version of Helm you want to use
 
       - name: Add Helm repository
-        run: helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/  # Replace <repository_url> with the actual URL of your Helm repository
+        run: |
+             helm init
+             helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/  # Replace <repository_url> with the actual URL of your Helm repository
 
       - name: Install Helm chart
         run: helm install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s  --create-namespace # Replace `my-release` with the desired release name and `my-repo/my-chart` with the chart reference
