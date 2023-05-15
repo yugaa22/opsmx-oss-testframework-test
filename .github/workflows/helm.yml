@@ -26,7 +26,9 @@ jobs:
 
 
       - name: Install Helm chart
-        run: helm install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s  --create-namespace # Replace `my-release` with the desired release name and `my-repo/my-chart` with the chart reference
+        run: |
+            helm repo update
+            helm install oss-spin spinnaker/spinnaker -n opsmx-oss --timeout 600s  --create-namespace # Replace `my-release` with the desired release name and `my-repo/my-chart` with the chart reference
 
     env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
