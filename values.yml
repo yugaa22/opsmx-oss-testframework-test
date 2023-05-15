@@ -1,0 +1,10 @@
+clouddriver:
+deck: quay.io/opsmxpublic/ubi8-deck-cve:29155a2-202305150732
+echo: quay.io/opsmxpublic/ubi8-echo-cve:0270076-202305150732
+fiat: quay.io/opsmxpublic/ubi8-fiat-cve:91aee2b-202305150732
+front50: quay.io/opsmxpublic/ubi8-front50-cve:2e55fc1-202305150732
+gate:
+igor: quay.io/opsmxpublic/ubi8-igor-cve:bc34c96-202305150732
+kayenta: quay.io/opsmxpublic/ubi8-kayenta-cve:5aafc75-202305150732
+orca: quay.io/opsmxpublic/ubi8-orca-cve:fc5e06a-202305150732
+rosco: quay.io/opsmxpublic/ubi8-rosco-cve:3d97038-202305150732
