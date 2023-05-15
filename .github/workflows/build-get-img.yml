@@ -1,6 +1,8 @@
 
 name: Java CI with Gradle1
 on:
+
+    
   push:
     branches:
     - main
@@ -18,12 +20,12 @@ jobs:
     - name: Checkout OpsMx Igor repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/igor-oes
-        ref: refs/heads/OES-1.30.x-master-adhoc
+        repository: opsmx/igor
+        ref: refs/heads/master
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
         cache: 'gradle'
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
@@ -33,20 +35,22 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::ubi8-igor-oes
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=VERSION::"yuga-$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
+      env:
+        ORG_GRADLE_PROJECT_version: ${{ steps.build_variables.outputs.VERSION }}
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        registry: quay.io
+        username: ksrinimba
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Igor-Dockerfile
         push: false
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
