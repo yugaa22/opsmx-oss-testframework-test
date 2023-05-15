@@ -4,7 +4,7 @@ on:
   workflow_call:
   push:
     branches:
-    - maintest
+    - main
     - release-*
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
@@ -39,7 +39,7 @@ jobs:
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
@@ -91,7 +91,7 @@ jobs:
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
@@ -109,7 +109,7 @@ jobs:
 
   build-echo:
     runs-on: ubuntu-latest
-    if: ${{ false }}
+    if: ${{ true }}
     steps:
     - name: Checkout OpsMx echo repo
       uses: actions/checkout@v3
@@ -135,7 +135,7 @@ jobs:
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
@@ -149,7 +149,7 @@ jobs:
     - id: get-build-name
       run: |
             imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
-            #echo "echo=$imageName" >> $GITHUB_OUTPUT
+            echo "echo=$imageName" >> $GITHUB_OUTPUT
 
   build-fiat:
     runs-on: ubuntu-latest
@@ -179,7 +179,7 @@ jobs:
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
@@ -224,7 +224,7 @@ jobs:
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
@@ -268,7 +268,7 @@ jobs:
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
@@ -315,7 +315,7 @@ jobs:
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
@@ -366,7 +366,7 @@ jobs:
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
@@ -411,7 +411,7 @@ jobs:
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
@@ -458,7 +458,7 @@ jobs:
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REPO }}
+        registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
@@ -475,9 +475,10 @@ jobs:
             #echo "rosco=$imageName" >> $GITHUB_OUTPUT  
   outputs:
     runs-on: ubuntu-latest
-    needs: build-igor
+    needs: [build-igor,build-echo]
     steps:
     - run: | 
             echo ${{ needs.build-igor.outputs.igor }}
+            echo ${{ needs.build-echo.outputs.echo }}
             
             
