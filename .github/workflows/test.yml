@@ -12,7 +12,7 @@ jobs:
 
     - name: Set up secret file
       env:
-        DEBUG_PASSWORD: ${{ secrets.YUGA }}
+        DEBUG_PASSWORD: ${{ secrets.KUBECONFIG }}
       run: |
         echo $DEBUG_PASSWORD >> secrets.txt
 
