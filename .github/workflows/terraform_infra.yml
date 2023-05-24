@@ -5,7 +5,7 @@ on:
     types:
       - completed
   push:
-    branches: [ "main" ]
+    branches: [ "main1" ]
   pull_request:
 
 permissions:
@@ -60,11 +60,8 @@ jobs:
 
            kubectl get ns --kubeconfig=kubefile
            
-           echo "copying into s3 bucket"
            
-           aws s3 cp kubefile s3://opsmx-terraform-state/kubefile
-           
-             echo "copying into s3 env bucket"
+             echo "copying into s3  bucket"
            aws s3 cp kubefile s3://${AWS_BUCKET}/kubefile
          
            #FILE_PATH=kubefile
@@ -82,11 +79,9 @@ jobs:
            #}
            #EOF
 
-                    
-            echo "copying from s3 bucket"
  
            aws s3 cp s3://${AWS_BUCKET}/kubefile s3_kubefile 
            
-                     echo "ns from new bucket"
+                     echo "Ns from  bucketfile"
             kubectl get ns --kubeconfig=s3_kubefile
 
