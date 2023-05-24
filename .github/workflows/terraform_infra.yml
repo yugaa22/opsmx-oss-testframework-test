@@ -54,6 +54,12 @@ jobs:
            terraform apply -auto-approve -input=false
            ls -lta 
            cat kubefile
+           
+           echo "Ns from local file"
+
+           kubectl get ns --kubeconfig=kubefile
+           
+           echo "copying into s3 bucket"
            aws s3 cp kubefile s3://${AWS_BUCKET}/kubefile
          
            #FILE_PATH=kubefile
@@ -70,11 +76,12 @@ jobs:
             #"key_id": "568250167242549743"
            #}
            #EOF
+
+                    
+            echo "copying from s3 bucket"
+ 
+           aws s3 cp s3://${AWS_BUCKET}/kubefile s3_kubefile 
            
-           kubectl get ns --kubeconfig=kubefile
-                      
-           aws s3 cp s3://${AWS_BUCKET}/kubefile s3_kubefile     
-    - name: List NS
-      run: |
-          echo "ns from new bucket"
-          kubectl get ns --kubeconfig=s3_kubefile
+                     echo "ns from new bucket"
+            kubectl get ns --kubeconfig=s3_kubefile
+
