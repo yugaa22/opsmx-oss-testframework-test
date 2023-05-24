@@ -13,6 +13,8 @@ permissions:
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
+  
 jobs:
   terraform_infra:
     name: 'Terraform Infra'
@@ -52,29 +54,27 @@ jobs:
            terraform apply -auto-approve -input=false
            ls -lta 
            cat kubefile
-           FILE_PATH=kubefile
-
+           aws s3 cp kubefile s3://${AWS_BUCKET}/kubefile
+         
+           #FILE_PATH=kubefile
            TOKEN=${{ secrets.GIT_TOKEN }}
-           curl -X PUT \
-           -H "Authorization: token $TOKEN" \
-           -H "Accept: application/vnd.github.v3+json" \
-           -H "Content-Type: application/json" \
-           -d @- \
-           "https://api.github.com/repos/${{ github.repository }}/actions/secrets/KUBECONFIGTEST" <<EOF
-           {
-           "encrypted_value": "$(base64 -w 0 $FILE_PATH)",
-            "key_id": "568250167242549743"
-           }
-           EOF
            
- 
+           #curl -X PUT \
+           #-H "Authorization: token $TOKEN" \
+           #-H "Accept: application/vnd.github.v3+json" \
+           #-H "Content-Type: application/json" \
+           #-d @- \
+           #"https://api.github.com/repos/${{ github.repository }}/actions/secrets/KUBECONFIGTEST" <<EOF
+           #{
+           #"encrypted_value": "$(base64 -w 0 $FILE_PATH)",
+            #"key_id": "568250167242549743"
+           #}
+           #EOF
            
-                      kubectl get ns --kubeconfig=kubefile
+           kubectl get ns --kubeconfig=kubefile
                       
-                      echo "testing ns"
-                      
-                      config=${{ secrets.KUBECONFIGTEST }} | base64 -d
-           
-           kubectl get ns --kubeconfig=config
-           
-           
+           aws s3 cp s3://${AWS_BUCKET}/kubefile s3_kubefile     
+    - name: List NS
+      run: |
+          echo "ns from new bucket"
+          kubectl get ns --kubeconfig=s3_kubefile
