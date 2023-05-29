@@ -490,17 +490,6 @@ jobs:
     - name: Che4ck out repository code
       uses: actions/checkout@v3
     - run: | 
-          touch bom 
-          echo clouddriver: ${{ needs.build-clouddriver.outputs.clouddriver }} > bom
-          echo deck: ${{ needs.build-deck.outputs.deck }} >> bom
-          echo echo: ${{ needs.build-echo.outputs.echo }} >> bom
-          echo fiat: ${{ needs.build-fiat.outputs.fiat }} >> bom
-          echo front50: ${{ needs.build-front50.outputs.front50 }} >> bom
-          echo gate: ${{ needs.build-gate.outputs.gate }} >> bom
-          echo igor: ${{ needs.build-igor.outputs.igor }} >> bom
-          echo kayenta: ${{ needs.build-kayenta.outputs.kayenta }} >> bom
-          echo orca: ${{ needs.build-orca.outputs.orca }} >> bom
-          echo rosco: ${{ needs.build-rosco.outputs.rosco }} >> bom
         
           echo artifactId: ${{ needs.build-clouddriver.outputs.clouddriver }} > default/service-settings/clouddriver.yml
           echo artifactId: ${{ needs.build-deck.outputs.deck }} > default/service-settings/deck.yml
@@ -518,7 +507,7 @@ jobs:
           git config --global user.email "yugaa22@gmail.com"
           git config --global user.name "yugaa22"
           git add .
-          git commit -m "Master images"
+          git commit -m "updating master Branch images into service settings"
           git push
       env:
          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
