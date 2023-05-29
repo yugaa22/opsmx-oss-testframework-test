@@ -503,15 +503,15 @@ jobs:
           echo rosco: ${{ needs.build-rosco.outputs.rosco }} >> bom
         
           echo artifactId: ${{ needs.build-clouddriver.outputs.clouddriver }} > default/service-settings/clouddriver.yml
-          echo artifactId: ${{ needs.build-clouddriver.outputs.deck }} > default/service-settings/deck.yml
-          echo artifactId: ${{ needs.build-clouddriver.outputs.echo }} > default/service-settings/echo.yml
-          echo artifactId: ${{ needs.build-clouddriver.outputs.fiat }} > default/service-settings/fiat.yml
-          echo artifactId: ${{ needs.build-clouddriver.outputs.front50 }} > default/service-settings/front50.yml
-          echo artifactId: ${{ needs.build-clouddriver.outputs.gate }} > default/service-settings/gate.yml
-          echo artifactId: ${{ needs.build-clouddriver.outputs.igor }} > default/service-settings/igor.yml
-          echo artifactId: ${{ needs.build-clouddriver.outputs.kayenta }} > default/service-settings/kayenta.yml
-          echo artifactId: ${{ needs.build-clouddriver.outputs.orca }} > default/service-settings/orca.yml
-          echo artifactId: ${{ needs.build-clouddriver.outputs.rosco }} > default/service-settings/rosco.yml
+          echo artifactId: ${{ needs.build-deck.outputs.deck }} > default/service-settings/deck.yml
+          echo artifactId: ${{ needs.build-echo.outputs.echo }} > default/service-settings/echo.yml
+          echo artifactId: ${{ needs.build-fiat.outputs.fiat }} > default/service-settings/fiat.yml
+          echo artifactId: ${{ needs.build-front50.outputs.front50 }} > default/service-settings/front50.yml
+          echo artifactId: ${{ needs.build-gate.outputs.gate }} > default/service-settings/gate.yml
+          echo artifactId: ${{ needs.build-igor.outputs.igor }} > default/service-settings/igor.yml
+          echo artifactId: ${{ needs.build-kayenta.outputs.kayenta }} > default/service-settings/kayenta.yml
+          echo artifactId: ${{ needs.build-orca.outputs.orca }} > default/service-settings/orca.yml
+          echo artifactId: ${{ needs.build-rosco.outputs.rosco }} > default/service-settings/rosco.yml
           
           #yq e -i '.deploymentConfigurations[0].version = "1.30.1"' config 
  
