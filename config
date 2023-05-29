@@ -145,7 +145,7 @@ deploymentConfigurations:
       bucket: spinnaker
       rootFolder: front50
       pathStyleAccess: true
-      endpoint: http://oss-spin-minio:9000
+      endpoint: http://oss-spin-test-minio:9000
       accessKeyId: spinnakeradmin
       secretAccessKey: spinnakeradmin
     oracle: {}
