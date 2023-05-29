@@ -27,11 +27,11 @@ jobs:
           helm repo update
       - name: Set up Kubernetes
         uses: azure/k8s-create-secret@v2
-           with:
-              namespace: 'spinnaker'
-              secret-type: 'generic'
-              secret-name: opsmx-gitops-auth
-              data: ${{ secrets.GIT_ACCOUNT_DATA }}
+        with:
+          namespace: 'spinnaker'
+          secret-type: 'generic'
+          secret-name: opsmx-gitops-auth
+          data: ${{ secrets.GIT_ACCOUNT_DATA }}
          
       - name: Install OpsMx Helm chart
         run: |
