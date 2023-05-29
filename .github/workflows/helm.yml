@@ -30,7 +30,7 @@ jobs:
         with:
           namespace: 'spinnaker'
           secret-type: 'generic'
-          secret-name: opsmx-gitops-auth
+          secret-name: 'opsmx-gitops-auth'
           data: ${{ secrets.GIT_ACCOUNT_DATA }}
          
       - name: Install OpsMx Helm chart
