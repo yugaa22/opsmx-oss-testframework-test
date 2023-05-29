@@ -25,15 +25,13 @@ jobs:
           helm repo add stable https://charts.helm.sh/stable
           helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
           helm repo update
-
-         
-      - name: Install OpsMx Helm chart
+          
+      - name: Setup OpsMx Helm chart and Install
         run: |
-          TOKEN=${{ secrets.GIT_TOKEN }}
           
            kubectl create ns spinnaker
             
            kubectl -n spinnaker create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam='${{ secrets.GIT_ACCOUNT_DATA }}' --from-literal=gituser=yugaa22 --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
           
-          #helm upgrade --install spinnaker spinnaker/spinnaker --set halyard.gitops.enabled=true --timeout 600s -n spinnaker
+           helm upgrade --install spinnaker spinnaker/spinnaker --set halyard.gitops.enabled=true --timeout 600s -n spinnaker
 
