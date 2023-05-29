@@ -26,7 +26,7 @@ jobs:
           helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
           helm repo update
       - name: Set up Kubernetes
-        uses: azure/k8s-create-secret@v2
+        uses: azure/k8s-create-secret@v4
         with:
           namespace: 'spinnaker'
           secret-type: 'Opaque'
