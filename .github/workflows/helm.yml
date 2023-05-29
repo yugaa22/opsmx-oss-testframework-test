@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-
 jobs:
   OpsMx-Spinnaker:
     runs-on: ubuntu-latest
