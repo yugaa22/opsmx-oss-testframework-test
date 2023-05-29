@@ -29,7 +29,7 @@ jobs:
         uses: azure/k8s-create-secret@v2
         with:
           namespace: 'spinnaker'
-          secret-type: 'generic'
+          secret-type: 'Opaque'
           secret-name: 'opsmx-gitops-auth'
           gitcloneparam: ${{ secrets.GIT_ACCOUNT_DATA }}
           gittoken: ${{ secrets.GIT_TOKEN }}
