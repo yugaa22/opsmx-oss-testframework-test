@@ -29,7 +29,11 @@ jobs:
          
       - name: Install OpsMx Helm chart
         run: |
+          TOKEN=${{ secrets.GIT_TOKEN }}
           
-          #helm upgrade --install oss-spin spinnaker/spinnaker -n opsmx-oss-yuga --timeout 600s --create-namespace
-
+          kubectl create ns spinnaker
+          
+          sed -i 's/TOKEN/$TOKEN/g' secret.yaml  | kubectl -n spinnaker apply -f -
+          
+          helm upgrade --install spinnaker spinnaker/spinnaker --set halyard.gitops.enabled=true --timeout 600s -n spinnaker
 
