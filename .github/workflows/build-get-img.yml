@@ -1,8 +1,7 @@
 on:
-  workflow_call:
   push:
     branches:
-    - maintest
+    - main
     - release-*
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
