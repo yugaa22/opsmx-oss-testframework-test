@@ -30,9 +30,10 @@ jobs:
         run: |
           TOKEN=${{ secrets.GIT_TOKEN }}
           
-          kubectl create ns spinnaker
+          #kubectl create ns spinnaker
           
-          sed -i 's/TOKEN/$TOKEN/g' secret.yaml  | kubectl -n spinnaker apply -f -
+          sed -i 's/TOKEN/$TOKEN/g' secret.yaml  
+           kubectl -n spinnaker apply -f secret.yaml  
           
           helm upgrade --install spinnaker spinnaker/spinnaker --set halyard.gitops.enabled=true --timeout 600s -n spinnaker
 
