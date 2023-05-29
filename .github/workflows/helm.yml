@@ -31,5 +31,5 @@ jobs:
             
            kubectl -n spinnaker create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam='${{ secrets.GIT_ACCOUNT_DATA }}' --from-literal=gituser=yugaa22 --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
           
-           helm upgrade --install oss-spin spinnaker/spinnaker --set halyard.gitops.enabled=true --timeout 600s -n spinnaker
+           helm upgrade --install oss-spin-test spinnaker/spinnaker --set halyard.gitops.enabled=true --timeout 600s -n spinnaker
 
