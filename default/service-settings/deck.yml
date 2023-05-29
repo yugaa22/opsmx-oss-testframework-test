@@ -1,2 +1,1 @@
-env:
-  API_HOST: http://spin-gate:8084
+artifactId:
