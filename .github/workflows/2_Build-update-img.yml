@@ -45,7 +45,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Dockerfile-dev
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -145,7 +145,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Dockerfile-dev
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -191,7 +191,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Dockerfile-dev
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -238,7 +238,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Dockerfile-dev
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -286,7 +286,7 @@ jobs:
         context: .
         build-args: |
             CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.2-rc1
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Dockerfile-dev
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -332,7 +332,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Dockerfile-dev
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -428,7 +428,7 @@ jobs:
         context: .
         build-args: |
             CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.2-rc1
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Dockerfile-dev
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -475,7 +475,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Dockerfile-dev
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
