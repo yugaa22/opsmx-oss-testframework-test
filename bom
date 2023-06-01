@@ -19,3 +19,4 @@ services:
     img: "quay.io/opsmxpublic/ubi8-orca-cve:4ab668b34-202306010545-dev"
   "rosco":
     img: "quay.io/opsmxpublic/ubi8-rosco-cve:fd000ac-202306010542-dev"
+
