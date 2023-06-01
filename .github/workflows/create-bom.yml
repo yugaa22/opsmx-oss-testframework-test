@@ -100,11 +100,7 @@ jobs:
           
           echo ${{ needs.build-igor.outputs.igorold }}
           
-          #echo ${{ env.IGOR }}
-          
-                    echo ${{ needs.build-igor.outputs.igor }} 
-          
-          img=${{ needs.build-igor.outputs.igor }}
+          img=${{ needs.build-igor.outputs.igorold }}
           
           yq e -i '.services.igor.img = $img' bom 
  
