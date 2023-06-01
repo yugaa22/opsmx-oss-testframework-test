@@ -110,9 +110,7 @@ jobs:
             echo $img
             yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igorold }}"' bom 
           fi
-          echo $img       
-          
-                      yq e -i '.services.igor.img = "$img"' bom 
+          echo $img      
 
           
           echo $date >> bom
