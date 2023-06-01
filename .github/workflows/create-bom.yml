@@ -84,7 +84,7 @@ jobs:
          yq '.services.igor.img' bom
          echo "false condition"
          imageName=$(yq '.services.igor.img' bom)
-         echo "igor=$imageName" >> $GITHUB_OUTPUT
+         echo "igorold=$imageName" >> $GITHUB_OUTPUT
         # echo "IGOR=$imageName" >> $GITHUB_ENV
           
   outputs:
@@ -99,6 +99,7 @@ jobs:
           cp bom bom-old
           
           echo ${{ needs.build-igor.outputs.igorold }}
+          
           #echo ${{ env.IGOR }}
           
                     echo ${{ needs.build-igor.outputs.igor }} 
