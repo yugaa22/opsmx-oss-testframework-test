@@ -98,11 +98,22 @@ jobs:
     
           cp bom bom-old
           
+          echo ${{ needs.build-igor.outputs.igor }}        
           echo ${{ needs.build-igor.outputs.igorold }}
           
-          img=${{ needs.build-igor.outputs.igorold }}
+           if [ -z '${{ needs.build-igor.outputs.igor }}' ]; then
+            img=${{ needs.build-igor.outputs.igor }}
+            echo $img
+            yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igor }}"' bom 
+          else
+            img=${{ needs.build-igor.outputs.igorold }}
+            echo $img
+            yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igorold }}"' bom 
+          fi
+          echo $img       
           
-          yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igorold }}"' bom 
+                      yq e -i '.services.igor.img = "$img"' bom 
+
           
           echo $date >> bom
  
