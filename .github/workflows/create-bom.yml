@@ -35,7 +35,8 @@ jobs:
            echo "CHANGES_EXISTS=false"       
          fi      
          
-         echo "now env is" ${{ env.CHANGES_EXISTS }}
+         #echo "now env is" ${{ env.CHANGES_EXISTS }}
+         echo "now env is" $CHANGES_EXISTS
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
