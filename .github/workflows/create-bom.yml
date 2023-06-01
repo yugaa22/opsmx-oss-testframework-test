@@ -24,8 +24,10 @@ jobs:
        if [ $(git log --since="$(date) 00:00:00" --format=%H) ]; then 
            echo "There are changes for today $date"
            git log --since="$(date) 00:00:00" --format=%H           
-          echo "{name}={CHANGES_EXISTS::true}" >> $GITHUB_OUTPUT 
-          echo "CHANGES_EXISTS=true"  
+          #echo "{name}={CHANGES_EXISTS::true}" >> $GITHUB_OUTPUT 
+          echo "{CHANGES_EXISTS}={true}" >> $GITHUB_OUTPUT 
+
+          #echo "CHANGES_EXISTS=true"  
          else
            echo "No Changes for today $date"
            git log --since="$(date) 00:00:00" --format=%H
