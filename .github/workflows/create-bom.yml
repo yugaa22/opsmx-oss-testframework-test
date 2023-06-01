@@ -24,12 +24,12 @@ jobs:
        if [ $(git log --since="$(date) 00:00:00" --format=%H) ]; then 
            echo "There are changes for today $date"
            git log --since="$(date) 00:00:00" --format=%H
-          echo "{name}={changes_exist::true}" >> $GITHUB_OUTPUT   
+           echo ::set-output name=changes_exist::"true"
+          #echo "{name}={changes_exist::true}" >> $GITHUB_OUTPUT   
         else
           echo "No Changes for today $date"
            git log --since="$(date) 00:00:00" --format=%H
-           echo "{name}={changes_exist::false}" >> $GITHUB_OUTPUT
-           
+           echo "{name}={changes_exist::false}" >> $GITHUB_OUTPUT           
          fi      
     - uses: actions/setup-java@v3
       if: ${{ env.changes_exist == 'true' }}
