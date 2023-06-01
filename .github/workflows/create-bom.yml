@@ -77,13 +77,13 @@ jobs:
             #echo "IGOR=$imageName" >> $GITHUB_ENV
     - name: Checkout  repo
       uses: actions/checkout@v3
-    - if: ${{ env.CHANGES_EXISTS == 'false' }}
+    - id: get-build-name-old
+      if: ${{ env.CHANGES_EXISTS == 'false' }}
       run: |
          yq '.services.igor.img' bom
          echo "false condition"
          imageName=$(yq '.services.igor.img' bom)
          echo "igor=$imageName" >> $GITHUB_OUTPUT
-        # echo "IGOR=$imageName" >> $GITHUB_ENV
           
   outputs:
     runs-on: ubuntu-latest
