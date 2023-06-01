@@ -25,18 +25,18 @@ jobs:
            echo "There are changes for today $date"
            git log --since="$(date) 00:00:00" --format=%H           
           #echo "{name}={CHANGES_EXISTS::true}" >> $GITHUB_OUTPUT 
-          echo "{CHANGES_EXISTS}={true}" >> $GITHUB_OUTPUT 
+          echo "{CHANGES_EXISTS}={true}" >> $GITHUB_ENV
 
           #echo "CHANGES_EXISTS=true"  
          else
            echo "No Changes for today $date"
            git log --since="$(date) 00:00:00" --format=%H
-           echo "{name}={CHANGES_EXISTS::false}" >> $GITHUB_OUTPUT 
+           echo "{name}={CHANGES_EXISTS::false}" >> $GITHUB_ENV
            echo "CHANGES_EXISTS=false"       
          fi      
          
-         #echo "now env is" ${{ env.CHANGES_EXISTS }}
-         echo "now env is" $CHANGES_EXISTS
+         echo "now env is" ${{ env.CHANGES_EXISTS }}
+         #echo "now env is" $CHANGES_EXISTS
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
