@@ -17,7 +17,7 @@ jobs:
     - name: Checkout OpsMx igor repo
       uses: actions/checkout@v3
       with:
-        repository: yugaa22/igor
+        repository: opsmx/igor-oes
         ref: refs/heads/master
     - name: check for changes
       run: |
