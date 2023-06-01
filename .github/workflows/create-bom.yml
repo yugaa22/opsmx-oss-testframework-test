@@ -67,7 +67,7 @@ jobs:
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-    - id: get-build-name
+    - name: get-build-name
       run: |    
         if [ ${{ env.CHANGES_EXISTS == 'true' }} ]; then 
              echo "not executing"
