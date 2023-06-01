@@ -96,18 +96,17 @@ jobs:
           cp bom bom-old 
           
           echo ${{ needs.build-igor.outputs.igor }}
+          echo ${{ needs.build-igor-old.outputs.igorold }}
           
-          if [ -z "${{ needs.build-igor.outputs.igor }}" ]; then
+          if [ -z '${{ needs.build-igor.outputs.igor }}' ]; then
             img=${{ needs.build-igor.outputs.igor }}
             echo $img
-            #yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igor }}"' bom  
           else
             img=${{ needs.build-igor-old.outputs.igorold }}
             echo $img
-            3 yq e -i '.services.igor.img = "${{ needs.build-igor-old.outputs.igorold }}"' bom 
           fi
           echo $img
-                      yq e -i '.services.igor.img = $img' bom  
+          yq e -i '.services.igor.img = $img' bom  
 
           git config --global user.email "yugaa22@gmail.com"
           git config --global user.name "yugaa22"
