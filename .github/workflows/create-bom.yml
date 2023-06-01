@@ -67,21 +67,21 @@ jobs:
         push: false
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-    - name: get-build-name
+    - id: get-build-name
       uses: actions/checkout@v3    
     - if: ${{ env.CHANGES_EXISTS == 'true' }}
       run: |
            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
              echo "true condition"
             echo "igor=$imageName" >> $GITHUB_OUTPUT
-            echo "igor=$imageName" >> $GITHUB_ENV
+            #echo "igor=$imageName" >> $GITHUB_ENV
     - if: ${{ env.CHANGES_EXISTS == 'false' }}
       run: |
          yq '.services.igor.img' bom
          echo "false condition"
          imageName=$(yq '.services.igor.img' bom)
          echo "igor=$imageName" >> $GITHUB_OUTPUT
-         echo "igor=$imageName" >> $GITHUB_ENV
+         #echo "igor=$imageName" >> $GITHUB_ENV
           
   outputs:
     runs-on: ubuntu-latest
@@ -93,7 +93,7 @@ jobs:
     
           cp bom bom-old
           
-          img=${{ env.igor }}
+          img=${{ needs.build-igor.outputs.igor }}
           
           yq e -i '.services.igor.img = $img' bom 
  
