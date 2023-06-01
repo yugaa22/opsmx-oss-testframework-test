@@ -71,7 +71,7 @@ jobs:
       run: |    
         echo  "output is" ${{ env.CHANGES_EXISTS }} 
          
-        if [ !${{ env.CHANGES_EXISTS }} ]; then 
+        if [ ${{ env.CHANGES_EXISTS }} ]; then 
              echo "not executing"
              imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
          else
