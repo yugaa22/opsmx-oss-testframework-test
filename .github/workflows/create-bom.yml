@@ -64,7 +64,7 @@ jobs:
       with:
         context: .
         file: docker/ubi8/Dockerfile-dev
-        push: true
+        push: false
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
     - name: get-build-name
@@ -91,9 +91,9 @@ jobs:
     
           cp bom bom-old
           
-          echo artifactId: ${{ needs.build-igor.outputs.igor }}  > test
+          img=${{ needs.build-igor.outputs.igor }} 
           
-          yq e -i ".services.igor.img = '${{ needs.build-igor.outputs.igor }}'" bom 
+          yq e -i '.services.igor.img = $img' bom 
  
           git config --global user.email "yugaa22@gmail.com"
           git config --global user.name "yugaa22"
