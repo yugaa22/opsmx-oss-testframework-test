@@ -81,7 +81,7 @@ jobs:
     - run: |
          yq '.services.igor.img' bom
          echo "false condition"
-         imageName=$(yq '.services.igor.img' bom
+         imageName=$(yq '.services.igor.img' bom)
          echo "igor=$imageName" >> $GITHUB_OUTPUT
           
   outputs:
