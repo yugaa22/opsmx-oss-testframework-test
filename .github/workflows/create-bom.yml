@@ -98,8 +98,13 @@ jobs:
           
           echo ${{ needs.build-igor.outputs.igor }}
           
-          yq e -i '.services.igor.img = ${{ needs.build-igor.outputs.igor }}' bom 
+          echo artifactId: ${{ needs.build-igor.outputs.igor }} 
+          echo "test"
+          
+          yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igor }}"' bom 
 
+
+           echo "testdone"
           #yq ${{ needs.build-igor.outputs.igor }} > bom
           
           #yq e -i '.deploymentConfigurations[0].version = "1.30.1"' config 
