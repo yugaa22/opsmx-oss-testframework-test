@@ -11,6 +11,7 @@ jobs:
   build-igor:
     outputs:
       igor: ${{ steps.get-build-name.outputs.igor }}
+      igorold: ${{ steps.get-build-name-old.outputs.igorold }}
     if: ${{ true }}
     runs-on: ubuntu-latest
     steps:
@@ -77,6 +78,7 @@ jobs:
             #echo "IGOR=$imageName" >> $GITHUB_ENV
     - name: Checkout  repo
       uses: actions/checkout@v3
+    - id: get-build-name-old
     - if: ${{ env.CHANGES_EXISTS == 'false' }}
       run: |
          yq '.services.igor.img' bom
@@ -95,7 +97,7 @@ jobs:
     
           cp bom bom-old
           
-          echo artifactId: ${{ needs.build-igor.outputs.igor }} > test
+          echo ${{ needs.build-igor.outputs.igorold }}
           #echo ${{ env.IGOR }}
           
                     echo ${{ needs.build-igor.outputs.igor }} 
