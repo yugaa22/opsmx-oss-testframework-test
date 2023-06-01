@@ -17,8 +17,8 @@ jobs:
     - name: Checkout OpsMx igor repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/igor-oes
-        ref: refs/heads/OES-1.30.x
+        repository: yugaa22/igor
+        ref: refs/heads/master
     - name: check for changes
       run: |
         if git log --since="$(date) 00:00:00" --format=%H; then
