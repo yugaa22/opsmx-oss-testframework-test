@@ -11,6 +11,7 @@ jobs:
   build-igor:
     outputs:
       igor: ${{ steps.get-build-name.outputs.igor }}
+      igorold: ${{ steps.get-build-name-old.outputs.igor }}
     if: ${{ true }}
     runs-on: ubuntu-latest
     steps:
@@ -90,15 +91,28 @@ jobs:
     needs: [build-igor]
     steps:
     - name: Check out repository code
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
       uses: actions/checkout@v3
     - run: | 
-    
-          cp bom bom-old
+          cp bom bom-old    
           img=${{ needs.build-igor.outputs.igor }}
-
           echo $img
           yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igor }}"' bom 
- 
+          git config --global user.email "yugaa22@gmail.com"
+          git config --global user.name "yugaa22"
+          git add .
+          git commit -m "updating master Branch images into service settings"
+          git push
+      env:
+         GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+    - name: Check out repository
+      if: ${{ env.CHANGES_EXISTS == 'false' }}
+      uses: actions/checkout@v3
+    - run: | 
+          cp bom bom-old    
+          img=${{ needs.build-igor-old.outputs.igorold }}
+          echo $img
+          yq e -i '.services.igor.img = "${{ needs.build-igor-old.outputs.igor }}"' bom 
           git config --global user.email "yugaa22@gmail.com"
           git config --global user.name "yugaa22"
           git add .
