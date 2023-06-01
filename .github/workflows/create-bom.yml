@@ -77,7 +77,8 @@ jobs:
              echo "true condition"
             echo "igor=$imageName" >> $GITHUB_OUTPUT
     - if: ${{ env.CHANGES_EXISTS == 'false' }}
-      run: |
+      uses: actions/checkout@v3
+    - run: |
          yq '.services.igor.img' bom
          echo "false condition"
          imageName=$(yq '.services.igor.img' bom
