@@ -70,17 +70,19 @@ jobs:
     - name: get-build-name
       run: |    
         echo  "output is" ${{ env.CHANGES_EXISTS }} 
-         
-        if [ ${{ env.CHANGES_EXISTS }} ]; then 
-             echo "not executing"
-             imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
-         else
-             echo "came to here"
-              yq '.services.igor.img' bom
-              imageName=$(yq '.services.igor.img' bom)
-         fi   
+        
+    - if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: |
+           imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+             echo "true condition"
             echo "igor=$imageName" >> $GITHUB_OUTPUT
-            
+    - if: ${{ env.CHANGES_EXISTS == 'false' }}
+      run: |
+         yq '.services.igor.img' bom
+         echo "false condition"
+         imageName=$(yq '.services.igor.img' bom
+         echo "igor=$imageName" >> $GITHUB_OUTPUT
+          
   outputs:
     runs-on: ubuntu-latest
     needs: [build-igor]
