@@ -20,7 +20,7 @@ jobs:
         repository: opsmx/igor-oes
         ref: refs/heads/OES-1.30.x
     - name: check for new commits
-      if: ${{ `git log --since="$(date) 00:00:00" --format=%H` }}
+      if: ${{ (git log --since="$(date) 00:00:00" --format=%H) }}
       run: |           
           echo 'no New commits'
           exit 1
