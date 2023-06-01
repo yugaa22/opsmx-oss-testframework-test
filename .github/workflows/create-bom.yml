@@ -22,10 +22,13 @@ jobs:
     - name: check for changes
       run: |
         if git log --since="$(date) 00:00:00" --format=%H; then
-           echo "::set-output name=changes_exist::true"
+          echo "success"
+           echo "{name}={changes_exist::true}" >> $GITHUB_OUTPUT
+           #echo "::set-output name=changes_exist::true"
         else
-           echo "::set-output name=changes_exist::false"
-        fi      
+           echo "{name}={changes_exist::false}" >> $GITHUB_OUTPUT   
+           echo "it is false"
+         fi      
     - uses: actions/setup-java@v3
       with:
         distribution: temurin
@@ -41,6 +44,7 @@ jobs:
           echo ::set-output name=REPO::"ubi8-igor-cve"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
+      if: ${{ env.changes_exist == 'true' }}
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
     - name: Login to Quay
       uses: docker/login-action@v1
