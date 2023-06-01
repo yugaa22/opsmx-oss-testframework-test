@@ -68,17 +68,14 @@ jobs:
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
     - name: get-build-name
-      run: |    
-        echo  "output is" ${{ env.CHANGES_EXISTS }} 
-        
+      uses: actions/checkout@v3    
     - if: ${{ env.CHANGES_EXISTS == 'true' }}
       run: |
            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
              echo "true condition"
             echo "igor=$imageName" >> $GITHUB_OUTPUT
     - if: ${{ env.CHANGES_EXISTS == 'false' }}
-      uses: actions/checkout@v3
-    - run: |
+      run: |
          yq '.services.igor.img' bom
          echo "false condition"
          imageName=$(yq '.services.igor.img' bom)
