@@ -75,13 +75,14 @@ jobs:
              echo "true condition"
             echo "igor=$imageName" >> $GITHUB_OUTPUT
             #echo "igor=$imageName" >> $GITHUB_ENV
+            echo "IGOR=$imageName" >> $GITHUB_ENV
     - if: ${{ env.CHANGES_EXISTS == 'false' }}
       run: |
          yq '.services.igor.img' bom
          echo "false condition"
          imageName=$(yq '.services.igor.img' bom)
          echo "igor=$imageName" >> $GITHUB_OUTPUT
-         #echo "igor=$imageName" >> $GITHUB_ENV
+            echo "IGOR=$imageName" >> $GITHUB_ENV
           
   outputs:
     runs-on: ubuntu-latest
@@ -92,8 +93,9 @@ jobs:
     - run: | 
     
           cp bom bom-old
+          echo ${{ env.IGOR }
           
-          img=${{ needs.build-igor.outputs.igor }}
+          img=${{ env.IGOR }}
           
           yq e -i '.services.igor.img = $img' bom 
  
