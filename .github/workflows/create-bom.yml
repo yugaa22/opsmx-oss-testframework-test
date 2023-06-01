@@ -90,6 +90,9 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v3
     - run: | 
+    
+         ls -ltra
+         
           cp bom bom-old
           
           yq e -i '.services.igor.img = ${{ needs.build-igor.outputs.igor }}' bom 
