@@ -101,7 +101,7 @@ jobs:
           echo ${{ needs.build-igor.outputs.igor }}        
           echo ${{ needs.build-igor.outputs.igorold }}
           
-           if [ -z '${{ needs.build-igor.outputs.igor }}' ]; then
+           if [ '${{ needs.build-igor.outputs.igor }}' ]; then
             img=${{ needs.build-igor.outputs.igor }}
             echo $img
             echo "adding built image"
