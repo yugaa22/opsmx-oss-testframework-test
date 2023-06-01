@@ -69,7 +69,7 @@ jobs:
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
     - name: get-build-name
       run: |    
-        if [ ${{ env.CHANGES_EXISTS == true }} ]; then 
+        if [ ${{ env.CHANGES_EXISTS }} ]; then 
              echo "not executing"
              imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
          else
