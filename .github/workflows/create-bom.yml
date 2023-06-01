@@ -22,23 +22,30 @@ jobs:
     - name: check for changes
       run: |
         if git log --since="$(date) 00:00:00" --format=%H; then
-          echo "success"
-           echo "{name}={changes_exist::true}" >> $GITHUB_OUTPUT
-           #echo "::set-output name=changes_exist::true"
+           echo "No Changes for today $date"
+           git log --since="$(date) 00:00:00" --format=%H
+           echo $?
+           echo "{name}={changes_exist::false}" >> $GITHUB_OUTPUT
         else
-           echo "{name}={changes_exist::false}" >> $GITHUB_OUTPUT   
-           echo "it is false"
+           echo "There are changes for today $date"
+           git log --since="$(date) 00:00:00" --format=%H
+           echo $?
+          echo "{name}={changes_exist::true}" >> $GITHUB_OUTPUT   
          fi      
     - uses: actions/setup-java@v3
+      if: ${{ env.changes_exist == 'true' }}
       with:
         distribution: temurin
         java-version: 17
         cache: 'gradle'
     - name: Set up QEMU
+      if: ${{ env.changes_exist == 'true' }}
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
+      if: ${{ env.changes_exist == 'true' }}
       uses: docker/setup-buildx-action@v2
     - name: Prepare build variables
+      if: ${{ env.changes_exist == 'true' }}
       id: build_variables
       run: |
           echo ::set-output name=REPO::"ubi8-igor-cve"
@@ -47,12 +54,14 @@ jobs:
       if: ${{ env.changes_exist == 'true' }}
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
     - name: Login to Quay
+      if: ${{ env.changes_exist == 'true' }}
       uses: docker/login-action@v1
       with:
         registry: quay.io
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_KEY }}
     - name: dockerBuildpush
+      if: ${{ env.changes_exist == 'true' }}
       uses: docker/build-push-action@v2
       with:
         context: .
@@ -61,6 +70,7 @@ jobs:
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
     - id: get-build-name
+      if: ${{ env.changes_exist == 'true' }}
       run: |
             imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
             echo "igor=$imageName" >> $GITHUB_OUTPUT
