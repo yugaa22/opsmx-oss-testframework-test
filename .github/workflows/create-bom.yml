@@ -90,11 +90,9 @@ jobs:
     steps:
     - name: Check out repository code
       uses: actions/checkout@v3
-      
-    - name: update bom 
-      run: | 
+    - run: | 
           cp bom bom-old 
-          
+
           echo ${{ needs.build-igor.outputs.igor }}
           echo ${{ needs.build-igor-old.outputs.igorold }}
           
@@ -106,6 +104,7 @@ jobs:
             echo $img
           fi
           echo $img
+          
           yq e -i '.services.igor.img = $img' bom  
 
           git config --global user.email "yugaa22@gmail.com"
