@@ -103,6 +103,8 @@ jobs:
           img=${{ needs.build-igor.outputs.igorold }}
           
           yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igorold }}"' bom 
+          
+          echo $date >> bom
  
           git config --global user.email "yugaa22@gmail.com"
           git config --global user.name "yugaa22"
