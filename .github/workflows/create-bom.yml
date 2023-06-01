@@ -93,8 +93,10 @@ jobs:
     - run: | 
     
          ls -ltra
-         
+          touch bom-old
           cp bom bom-old
+          
+          echo ${{ needs.build-igor.outputs.igor }}
           
           yq e -i '.services.igor.img = ${{ needs.build-igor.outputs.igor }}' bom 
 
