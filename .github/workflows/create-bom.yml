@@ -104,10 +104,12 @@ jobs:
            if [ -z '${{ needs.build-igor.outputs.igor }}' ]; then
             img=${{ needs.build-igor.outputs.igor }}
             echo $img
+            echo "adding built image"
             yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igor }}"' bom 
           else
             img=${{ needs.build-igor.outputs.igorold }}
             echo $img
+            echo "adding old image from old bom"
             yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igorold }}"' bom 
           fi
           echo $img      
