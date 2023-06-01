@@ -7,7 +7,6 @@ env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
   CONTAINER_REGISTRY: quay.io/opsmxpublic
 jobs:
-
   build-igor:
     outputs:
       igor: ${{ steps.get-build-name.outputs.igor }}
@@ -91,10 +90,13 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v3
       
-    - name: update bom from build image
+    - name: update bom 
       run: | 
           cp bom bom-old 
-          if [ ${{ needs.build-igor.outputs.igor }} ]; then
+          
+          echo ${{ needs.build-igor.outputs.igor }}
+          
+          if [ -z "${{ needs.build-igor.outputs.igor }}" ]; then
             img=${{ needs.build-igor.outputs.igor }}
             echo $img
             #yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igor }}"' bom  
