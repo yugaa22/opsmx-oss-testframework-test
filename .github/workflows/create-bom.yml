@@ -30,19 +30,31 @@ jobs:
            git log --since="$(date) 00:00:00" --format=%H
            echo "CHANGES_EXISTS=false" >> $GITHUB_ENV
          fi 
-    - name: Create Git Tag abd 
-      uses: actions/github-script@v6
+    - name: Create Git Tag
+      uses: actions/github-script@v4
       with:
-        script: |
-          github.rest.git.createRef({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            ref: refs/tags/v1.0.0,
-            sha: context.sha
-          })
-        
-           git checkout tags/v1.0.0
-      
+       github-token: ${{ secrets.GITHUB_TOKEN }}
+       script: |
+         const { data: { default_branch } } = await github.repos.get({
+         owner: context.repo.owner,
+         repo: context.repo.repo
+         });
+          const { data: { object: { sha } } } = await github.repos.getRef({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          ref: `heads/${default_branch}`
+         });
+           await github.git.createRef({
+           owner: context.repo.owner,
+           repo: context.repo.repo,
+           ref: `refs/tags/v1.0.0`,
+           sha: sha
+         });
+    - name: Checkout Tag
+      run: |
+       git config --local user.email "actions@github.com"
+       git config --local user.name "GitHub Actions"
+       git checkout tags/v1.0.0
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
