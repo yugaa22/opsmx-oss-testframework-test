@@ -32,6 +32,8 @@ jobs:
          fi 
     - name: Create Git Tag abd 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
+      env:
+         GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
       run: |
         git config --local user.email "yugaa22@gmail.com"
         git config --local user.name "yugaa22"
