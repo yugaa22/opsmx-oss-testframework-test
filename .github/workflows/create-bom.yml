@@ -53,7 +53,11 @@ jobs:
         git fetch --all        
         git checkout yuga
         git branch 
-
+    - name: checkout in OpsMx igor tag
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/igor-oes
+        ref: refs/tags/yuga
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
