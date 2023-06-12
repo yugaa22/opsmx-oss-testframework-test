@@ -48,7 +48,10 @@ jobs:
          "sha": "$commit"
         }
         EOF
-          git tag -l | grep yuga
+        
+        git branch
+        
+        git tag -l | grep yuga
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
