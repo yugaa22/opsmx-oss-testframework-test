@@ -51,6 +51,8 @@ jobs:
         
         git branch
         
+        git tag -l | grep "yuga\|4.10"
+        
         git checkout yuga
         
         git branch 
