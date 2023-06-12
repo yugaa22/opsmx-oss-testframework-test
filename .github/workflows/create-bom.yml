@@ -50,13 +50,8 @@ jobs:
         EOF
         
         git branch
-        
-              git fetch --all        
-        
-        git tag -l | grep "yuga"
-        
+        git fetch --all        
         git checkout yuga
-        
         git branch 
 
     - uses: actions/setup-java@v3 
@@ -75,6 +70,7 @@ jobs:
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       id: build_variables
       run: |
+          git branch
           echo ::set-output name=REPO::"ubi8-igor-cve"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
