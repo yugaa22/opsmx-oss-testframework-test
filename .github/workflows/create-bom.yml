@@ -50,8 +50,7 @@ jobs:
         EOF
         
         git branch
-        
-        git tag -l | grep yuga
+        git tag -l
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
