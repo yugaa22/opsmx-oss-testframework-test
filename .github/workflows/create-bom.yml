@@ -3,6 +3,11 @@ on:
     branches:
     - main
     - release-*
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'New tag name'
+        required: true
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
   CONTAINER_REGISTRY: quay.io/opsmxpublic
@@ -29,21 +34,11 @@ jobs:
            echo "No Changes for Today $date"
            git log --since="$(date) 00:00:00" --format=%H
            echo "CHANGES_EXISTS=false" >> $GITHUB_ENV
-         fi 
-         
-    - uses: rickstaa/action-create-tag@v1
-      id: "tag_create"
-      with:
-          tag: "v1.0.0"
-          tag_exists_error: false
-          message: "Latest release"
-    - name: Checkout Tag
-      run: |
-       git config --local user.email "actions@github.com"
-       git config --local user.name "GitHub Actions"
-       git checkout tags/v1.0.0
-       git branch
-       
+         fi       
+    - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+    - run: git tag ${{ github.event.inputs.tag }}
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
