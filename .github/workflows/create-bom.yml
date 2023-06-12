@@ -51,12 +51,9 @@ jobs:
         
         git branch
         
-              git fetch --all
-        git tag -l
+              git fetch --all        
         
-        git branch -a
-        
-        git tag -l | grep "yuga\|4.10"
+        git tag -l | grep "yuga"
         
         git checkout yuga
         
