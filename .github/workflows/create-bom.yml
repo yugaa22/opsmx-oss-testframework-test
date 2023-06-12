@@ -50,7 +50,11 @@ jobs:
         EOF
         
         git branch
-        git tag -l
+        
+        git checkout yuga
+        
+        git branch 
+
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
