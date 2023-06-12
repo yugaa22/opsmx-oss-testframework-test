@@ -34,11 +34,17 @@ jobs:
            echo "No Changes for Today $date"
            git log --since="$(date) 00:00:00" --format=%H
            echo "CHANGES_EXISTS=false" >> $GITHUB_ENV
-         fi       
-    - uses: actions/checkout@v3
+         fi      
+         
+    - name: tag in OpsMx igor repo
+      uses: actions/checkout@v3
       with:
-          fetch-depth: 0
-    - run: git tag ${{ github.event.inputs.tag }}
+        repository: yugaa22/igor-oes
+        ref: refs/heads/OES-1.30.x
+    - run: |
+          git tag yuga
+          git push --tags
+    
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
