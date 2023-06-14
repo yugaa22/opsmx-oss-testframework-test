@@ -32,46 +32,34 @@ jobs:
          fi      
          
     - name: tag in OpsMx igor repo
-      id: tags
       uses: actions/checkout@v3
       with:
         repository: yugaa22/igor-oes
         ref: refs/heads/OES-1.30.x
-    - name: Get Organization Name
-      run: |
-        repo_url=$(git config --get remote.origin.url)
-          org_name=$(echo "$repo_url" | sed -n 's/.*github.com[:/]\([^/]*\)\/.*/\1/p')
-          echo "Organization Name: $org_name"
-          echo "Repo Name: $repo_url"
-          
-           commit=$(git rev-parse HEAD)
-           repo=$(basename `git rev-parse --show-toplevel`)
-           org=$(git remote get-url origin | sed -n 's/.*github.com[:/]\([^/]*\)\/.*/\1/p')
-           tag=v-${{ github.run_number }}
-        
-           echo $repo
-        
-           echo $org
-           echo $commit
-           echo $tag
-        
+    - run: |
+    
+    
+        commit=$(git rev-parse HEAD)
 
         # POST a new ref to repo via Github API
-        curl -s -X POST https://api.github.com/repos/$org_name/$repo/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
+        curl -s -X POST https://api.github.com/repos/yugaa22/igor-oes/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
          {
-         "ref": "refs/tags/yugaa",
+         "ref": "refs/tags/111",
          "sha": "$commit"
         }
         EOF
         
-        
         git branch
         git fetch --all        
-        git checkout $tag
+        git checkout 111
         git branch 
         
-        echo "TAG=v-${{ github.run_number }}" >> $GITHUB_ENV
         
+    - name: checkout in OpsMx igor tag
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/igor-oes
+        ref: refs/tags/111
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
@@ -136,10 +124,10 @@ jobs:
 
         git config --local user.email "yugaa22@gmail.com"
         git config --local user.name "yugaa22"
-        git tag -a $${{ env.TAG }} -m "Version 1.0.0"
+        git tag -a v1.0.0 -m "Version 1.0.0"
         git push --tags
         
-        git checkout tags/$${{ env.TAG }}
+        git checkout tags/v1.0.0
         
           cp bom bom-old
           
