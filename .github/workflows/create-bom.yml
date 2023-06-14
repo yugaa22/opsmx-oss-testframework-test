@@ -34,7 +34,7 @@ jobs:
     - name: tag in OpsMx igor repo
       uses: actions/checkout@v3
       with:
-        repository: yugaa22/igor-oes
+        repository: opsmx/igor-oes
         ref: refs/heads/OES-1.30.x
     - name: create tag
       run: |
