@@ -125,7 +125,11 @@ jobs:
 
         git config --local user.email "yugaa22@gmail.com"
         git config --local user.name "yugaa22"     
-        git checkout tags/v-${{ github.run_number }}
+        
+        #git tag -a v-${{ github.run_number }} -m "Version 1.0.0"
+        #git push --tags       
+        #git checkout tags/v-${{ github.run_number }}
+       
         
           cp bom bom-old
         
@@ -154,14 +158,19 @@ jobs:
                           
                           cat bom
           fi   
-          git branch
+          git config --global user.email "yugaa22@gmail.com"
+          git config --global user.name "yugaa22"
+          
           git add .
           git commit -m "updating master Branch images "
-          git push 
           git tag -a v-${{ github.run_number }} -m "Version 1.0.0"
+          git push --tags --force
+          
+          
+          #git tag -a v-${{ github.run_number }} -m "Version 1.0.0"
           #git push origin v-${{ github.run_number }}
           #git push --tags
-          git push --tags --force
+          #git push --tags --force
           #git push origin HEAD:v-${{ github.run_number }}
 
           #git push origin HEAD:<name-of-remote-branch>
