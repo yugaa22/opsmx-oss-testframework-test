@@ -148,10 +148,11 @@ jobs:
           fi            
           echo $date >> bom
           
+          
           git config --global user.email "yugaa22@gmail.com"
           git config --global user.name "yugaa22"
           git add .
-          git commit -m "updating master Branch images into service settings"
+          git commit -m "updating master Branch images "
           git push
       env:
          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
