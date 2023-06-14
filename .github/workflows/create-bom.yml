@@ -39,27 +39,25 @@ jobs:
         ref: refs/heads/OES-1.30.x
     - name: Get Organization Name
       run: |
-          repo_url=$(git config --get remote.origin.url)
+        repo_url=$(git config --get remote.origin.url)
           org_name=$(echo "$repo_url" | sed -n 's/.*github.com[:/]\([^/]*\)\/.*/\1/p')
           echo "Organization Name: $org_name"
-                    echo "Repo Name: $repo_url"
-
-
-    - run: |
-        commit=$(git rev-parse HEAD)
-        repo=$(basename `git rev-parse --show-toplevel`)
-        org=$(git remote get-url origin | sed -n 's/.*github.com[:/]\([^/]*\)\/.*/\1/p')
-        tag=${{ github.run_number }}
+          echo "Repo Name: $repo_url"
+          
+           commit=$(git rev-parse HEAD)
+           repo=$(basename `git rev-parse --show-toplevel`)
+           org=$(git remote get-url origin | sed -n 's/.*github.com[:/]\([^/]*\)\/.*/\1/p')
+           tag=v-${{ github.run_number }}
         
-        echo $repo
+           echo $repo
         
-        echo $org
-        echo $commit
-        echo $tag
+           echo $org
+           echo $commit
+           echo $tag
         
 
         # POST a new ref to repo via Github API
-        curl -s -X POST https://api.github.com/repos/$org/$repo/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
+        curl -s -X POST https://api.github.com/repos/$org_name/$repo_url/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
          {
          "ref": "refs/tags/$tag",
          "sha": "$commit"
@@ -72,7 +70,7 @@ jobs:
         git checkout $tag
         git branch 
         
-        echo "TAG=${{ github.run_number }}" >> $GITHUB_ENV
+        echo "TAG=v-${{ github.run_number }}" >> $GITHUB_ENV
         
     - uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
