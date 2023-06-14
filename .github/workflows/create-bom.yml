@@ -157,6 +157,7 @@ jobs:
           git branch
           git add .
           git commit -m "updating master Branch images "
+          git push 
           git tag -a v-${{ github.run_number }} -m "Version 1.0.0"
           #git push origin v-${{ github.run_number }}
           #git push --tags
