@@ -36,9 +36,8 @@ jobs:
       with:
         repository: yugaa22/igor-oes
         ref: refs/heads/OES-1.30.x
-    - run: |
-    
-    
+    - name: create tag
+      run: |
         commit=$(git rev-parse HEAD)
 
         # POST a new ref to repo via Github API
@@ -53,14 +52,14 @@ jobs:
         git fetch --all        
         git checkout v-${{ github.run_number }}
         git branch 
-        
-        
-    - name: checkout in OpsMx igor tag
+             
+    - name: checkout in OpsMx tag
       uses: actions/checkout@v3
       with:
         repository: yugaa22/igor-oes
         ref: refs/tags/v-${{ github.run_number }}
-    - uses: actions/setup-java@v3 
+    - name: grale setup
+      uses: actions/setup-java@v3 
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       with:
         distribution: temurin
@@ -98,7 +97,8 @@ jobs:
         push: false
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-    - id: get-build-name  
+    - name: Get the image name
+      id: get-build-name  
       if: ${{ env.CHANGES_EXISTS == 'true' }}
       run: |
            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
@@ -106,7 +106,8 @@ jobs:
              echo "igor=$imageName" >> $GITHUB_OUTPUT
     - name: Checkout  repo
       uses: actions/checkout@v3
-    - id: get-build-name-old
+    - name: Get build name from bom
+      id: get-build-name-old
       if: ${{ env.CHANGES_EXISTS == 'false' }}
       run: |
            imageName=$(yq '.services.igor.img' bom)
@@ -123,13 +124,11 @@ jobs:
       run: | 
 
         git config --local user.email "yugaa22@gmail.com"
-        git config --local user.name "yugaa22"
-
-        
+        git config --local user.name "yugaa22"     
         git checkout tags/v-${{ github.run_number }}
         
           cp bom bom-old
-          
+        
           echo ${{ needs.build-igor.outputs.igor }}        
           echo ${{ needs.build-igor.outputs.igorold }}
         
@@ -154,15 +153,14 @@ jobs:
                          echo  "after update"
                           
                           cat bom
-          fi            
-          echo $date >> bom
-          
+          fi                    
           git add .
           git commit -m "updating master Branch images "
           git tag -a v-${{ github.run_number }} -m "Version 1.0.0"
+          git push origin v-${{ github.run_number }}
           #git push --tags
           #git push --tags --force
-          git push origin HEAD:v-${{ github.run_number }}
+          #git push origin HEAD:v-${{ github.run_number }}
 
           #git push origin HEAD:<name-of-remote-branch>
       env:
