@@ -17,7 +17,7 @@ jobs:
     - name: Checkout OpsMx igor repo
       uses: actions/checkout@v3
       with:
-        repository: yugaa22/igor-oes
+        repository: opsmx/igor-oes
         ref: refs/heads/OES-1.30.x
     - name: checking for changes
       run: |
@@ -41,7 +41,7 @@ jobs:
         commit=$(git rev-parse HEAD)
 
         # POST a new ref to repo via Github API
-        curl -s -X POST https://api.github.com/repos/yugaa22/igor-oes/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
+        curl -s -X POST https://api.github.com/repos/opsmx/igor-oes/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
          {
          "ref": "refs/tags/v-${{ github.run_number }}",
          "sha": "$commit"
@@ -56,7 +56,7 @@ jobs:
     - name: checkout in OpsMx tag
       uses: actions/checkout@v3
       with:
-        repository: yugaa22/igor-oes
+        repository: opsmx/igor-oes
         ref: refs/tags/v-${{ github.run_number }}
     - name: grale setup
       uses: actions/setup-java@v3 
