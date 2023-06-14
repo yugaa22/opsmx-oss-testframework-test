@@ -162,7 +162,7 @@ jobs:
           git tag -a v-${{ github.run_number }} -m "Version 1.0.0"
           #git push --tags
           #git push --tags --force
-          git push origin v-${{ github.run_number }}
+          git push origin HEAD:v-${{ github.run_number }}
 
           #git push origin HEAD:<name-of-remote-branch>
       env:
