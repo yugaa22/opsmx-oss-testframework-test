@@ -153,13 +153,14 @@ jobs:
                          echo  "after update"
                           
                           cat bom
-          fi                    
+          fi   
+          git branch
           git add .
           git commit -m "updating master Branch images "
           git tag -a v-${{ github.run_number }} -m "Version 1.0.0"
-          git push origin v-${{ github.run_number }}
+          #git push origin v-${{ github.run_number }}
           #git push --tags
-          #git push --tags --force
+          git push --tags --force
           #git push origin HEAD:v-${{ github.run_number }}
 
           #git push origin HEAD:<name-of-remote-branch>
