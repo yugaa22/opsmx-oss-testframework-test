@@ -153,6 +153,7 @@ jobs:
           git config --global user.name "yugaa22"
           git add .
           git commit -m "updating master Branch images "
-          git push
+          git push --tags --force
+          #git push origin HEAD:<name-of-remote-branch>
       env:
          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
