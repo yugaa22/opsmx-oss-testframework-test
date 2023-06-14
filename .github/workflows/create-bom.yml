@@ -57,7 +57,7 @@ jobs:
         
 
         # POST a new ref to repo via Github API
-        curl -s -X POST https://api.github.com/repos/$org_name/$repo_url/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
+        curl -s -X POST https://api.github.com/repos/$org_name/$repo/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
          {
          "ref": "refs/tags/$tag",
          "sha": "$commit"
