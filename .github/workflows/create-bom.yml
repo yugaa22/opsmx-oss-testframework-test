@@ -42,6 +42,13 @@ jobs:
         repo=$(basename `git rev-parse --show-toplevel`)
         org=$(git remote get-url origin | sed -n 's/.*github.com[:/]\([^/]*\)\/.*/\1/p')
         tag=${{ github.run_number }}
+        
+        echo $repo
+        
+        echo $org
+        echo $commit
+        echo $tag
+        
 
         # POST a new ref to repo via Github API
         curl -s -X POST https://api.github.com/repos/$org/$repo/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
