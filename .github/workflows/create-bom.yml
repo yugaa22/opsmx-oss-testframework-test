@@ -139,12 +139,22 @@ jobs:
              img=${{ needs.build-igor.outputs.igor }}
              echo $img
              echo "Updating bom file built image"
+             echo  "before update"
+             cat bom
              yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igor }}"' bom 
-          else
+                          echo  "after update"
+                          
+                          cat bom
+           else
              img=${{ needs.build-igor.outputs.igorold }}
              echo $img
              echo "Updating bom file with old bom"
+                          echo  "before update"
+             cat bom
              yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igorold }}"' bom 
+                         echo  "after update"
+                          
+                          cat bom
           fi            
           echo $date >> bom
           
