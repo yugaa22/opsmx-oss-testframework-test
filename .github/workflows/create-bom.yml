@@ -124,10 +124,10 @@ jobs:
 
         git config --local user.email "yugaa22@gmail.com"
         git config --local user.name "yugaa22"
-        git tag -a v1.0.0 -m "Version 1.0.0"
+        git tag -a v-${{ github.run_number }} -m "Version 1.0.0"
         git push --tags
         
-        git checkout tags/v1.0.0
+        git checkout tags/v-${{ github.run_number }}
         
           cp bom bom-old
           
