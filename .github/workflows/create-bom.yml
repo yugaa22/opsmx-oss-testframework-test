@@ -37,6 +37,11 @@ jobs:
       with:
         repository: yugaa22/igor-oes
         ref: refs/heads/OES-1.30.x
+    - name: Get Organization Name
+      run: |
+          repo_url=$(git config --get remote.origin.url)
+          org_name=$(echo "$repo_url" | sed -n 's/.*github.com[:/]\([^/]*\)\/.*/\1/p')
+          echo "Organization Name: $org_name"
     - run: |
         commit=$(git rev-parse HEAD)
         repo=$(basename `git rev-parse --show-toplevel`)
