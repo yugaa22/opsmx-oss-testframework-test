@@ -12,7 +12,7 @@ services:
   "gate":
     img: "quay.io/opsmxpublic/ubi8-gate-cve:8516e030-202305301422-dev"
   "igor":
-    img: "quay.io/opsmxpublic/ubi8-igor-cve:bc31548-202306011234"
+    img: "quay.io/opsmxpublic/ubi8-igor-cve:7697931-202306141510"
   "kayenta":
     img: "quay.io/opsmxpublic/ubi8-kayenta-cve:5aafc75-202305301431"
   "orca":
