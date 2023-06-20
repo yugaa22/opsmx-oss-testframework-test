@@ -6,16 +6,16 @@ services:
   "echo":
     img: "quay.io/opsmxpublic/ubi8-echo-cve:4bfb59a5-202306151043"
   "fiat":
-    img: "quay.io/opsmxpublic/ubi8-fiat-cve:54834c4-202306201232"
+    img: "quay.io/opsmxpublic/ubi8-fiat-cve:54834c4-202306201250"
   "front50":
-    img: "quay.io/opsmxpublic/ubi8-front50-cve:c127c49-202306201232"
+    img: "quay.io/opsmxpublic/ubi8-front50-cve:c127c49-202306201251"
   "gate":
     img: "quay.io/opsmxpublic/ubi8-gate-cve:8516e030-202305301422-dev"
   "igor":
     img: "quay.io/opsmxpublic/ubi8-igor-cve:e6803c9-202306151043"
   "kayenta":
-    img: ""
+    img: "quay.io/opsmxpublic/ubi8-kayenta-cve:1526c60-202306201250"
   "orca":
-    img: "quay.io/opsmxpublic/ubi8-orca-cve:f93daf2-202306201232"
+    img: "quay.io/opsmxpublic/ubi8-orca-cve:f93daf2-202306201250"
   "rosco":
-    img: "quay.io/opsmxpublic/ubi8-rosco-cve:312ca61-202306201232"
+    img: "quay.io/opsmxpublic/ubi8-rosco-cve:312ca61-202306201250"
