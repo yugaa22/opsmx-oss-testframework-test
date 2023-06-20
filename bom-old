@@ -1,18 +1,18 @@
 services:
   "clouddriver":
-    img: "quay.io/opsmxpublic/ubi8-clouddriver-cve:125de0e40-202305311410-dev"
+    img: ""
   "deck":
-    img: "quay.io/opsmxpublic/ubi8-deck-cve:29155a21e-202305301427"
+    img: ""
   "echo":
-    img: "quay.io/opsmxpublic/ubi8-echo-cve:4bfb59a5-202306151043"
+    img: ""
   "fiat":
-    img: "quay.io/opsmxpublic/ubi8-fiat-cve:7154b19-202305311206-dev"
+    img: ""
   "front50":
-    img: "quay.io/opsmxpublic/ubi8-front50-cve:7680d942-202305311415-dev"
+    img: ""
   "gate":
     img: "quay.io/opsmxpublic/ubi8-gate-cve:8516e030-202305301422-dev"
   "igor":
-    img: "quay.io/opsmxpublic/ubi8-igor-cve:e6803c9-202306151043"
+    img: ""
   "kayenta":
     img: "quay.io/opsmxpublic/ubi8-kayenta-cve:5aafc75-202305301431"
   "orca":

@@ -6,9 +6,9 @@ services:
   "echo":
     img: ""
   "fiat":
-    img: ""
+    img: "quay.io/opsmxpublic/ubi8-fiat-cve:7dd1b66-202306201010"
   "front50":
-    img: ""
+    img: "quay.io/opsmxpublic/ubi8-front50-cve:c127c49-202306201010"
   "gate":
     img: "quay.io/opsmxpublic/ubi8-gate-cve:8516e030-202305301422-dev"
   "igor":
