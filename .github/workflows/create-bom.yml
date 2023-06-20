@@ -630,7 +630,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-dev
+        file: docker/ubi8/Dockerfile-fips
         push: false
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
