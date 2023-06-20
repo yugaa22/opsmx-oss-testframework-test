@@ -7,6 +7,545 @@ env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
   CONTAINER_REGISTRY: quay.io/opsmxpublic
 jobs:
+
+
+  build-clouddriver:
+    outputs:
+      clouddriver: ${{ steps.get-build-name.outputs.clouddriver }}
+      clouddriverold: ${{ steps.get-build-name-old.outputs.clouddriverold }}
+    if: ${{ true }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx clouddriver repo
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/clouddriver-oes
+        ref: refs/heads/OES-1.30.x
+    - name: checking for changes
+      run: |
+       if [ $(git log --since="$(date) 00:00:00" --format=%H) ]; then 
+           echo "There are changes for Today $date"
+           git log --since="$(date) 00:00:00" --format=%H         
+           echo "CHANGES_EXISTS=true" >> $GITHUB_ENV
+         else
+           echo "No Changes for Today $date"
+           git log --since="$(date) 00:00:00" --format=%H
+           echo "CHANGES_EXISTS=false" >> $GITHUB_ENV
+         fi      
+         
+    - name: tag in OpsMx clouddriver repo
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/clouddriver-oes
+        ref: refs/heads/OES-1.30.x
+    - name: create tag
+      run: |
+        commit=$(git rev-parse HEAD)
+
+        # POST a new ref to repo via Github API
+        curl -s -X POST https://api.github.com/repos/yugaa22/clouddriver-oes/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
+         {
+         "ref": "refs/tags/v-${{ github.run_number }}",
+         "sha": "$commit"
+        }
+        EOF
+        
+        git branch
+        git fetch --all        
+        git checkout v-${{ github.run_number }}
+        git branch 
+             
+    - name: checkout in OpsMx tag
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/clouddriver-oes
+        ref: refs/tags/v-${{ github.run_number }}
+    - name: grale setup
+      uses: actions/setup-java@v3 
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      id: build_variables
+      run: |
+          git branch
+          echo ::set-output name=REPO::"ubi8-clouddriver-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true clouddriver-web:installDist -x test
+    - name: Login to Quay
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-dev
+        push: false
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - name: Get the image name
+      id: get-build-name  
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: |
+           imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+             echo $imageName
+             echo "clouddriver=$imageName" >> $GITHUB_OUTPUT
+    - name: Checkout  repo
+      uses: actions/checkout@v3
+    - name: Get build name from bom
+      id: get-build-name-old
+      if: ${{ env.CHANGES_EXISTS == 'false' }}
+      run: |
+           imageName=$(yq '.services.clouddriver.img' bom)
+             echo $imageName
+             echo "clouddriverold=$imageName" >> $GITHUB_OUTPUT
+     
+  build-deck:
+    outputs:
+      deck: ${{ steps.get-build-name.outputs.deck }}
+      deckold: ${{ steps.get-build-name-old.outputs.deckold }}
+    if: ${{ true }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx deck repo
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/deck-oes
+        ref: refs/heads/OES-1.30.x
+    - name: checking for changes
+      run: |
+       if [ $(git log --since="$(date) 00:00:00" --format=%H) ]; then 
+           echo "There are changes for Today $date"
+           git log --since="$(date) 00:00:00" --format=%H         
+           echo "CHANGES_EXISTS=true" >> $GITHUB_ENV
+         else
+           echo "No Changes for Today $date"
+           git log --since="$(date) 00:00:00" --format=%H
+           echo "CHANGES_EXISTS=false" >> $GITHUB_ENV
+         fi      
+         
+    - name: tag in OpsMx deck repo
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/deck-oes
+        ref: refs/heads/OES-1.30.x
+    - name: create tag
+      run: |
+        commit=$(git rev-parse HEAD)
+
+        # POST a new ref to repo via Github API
+        curl -s -X POST https://api.github.com/repos/yugaa22/deck-oes/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
+         {
+         "ref": "refs/tags/v-${{ github.run_number }}",
+         "sha": "$commit"
+        }
+        EOF
+        
+        git branch
+        git fetch --all        
+        git checkout v-${{ github.run_number }}
+        git branch 
+             
+    - name: checkout in OpsMx tag
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/deck-oes
+        ref: refs/tags/v-${{ github.run_number }}
+    - name: grale setup
+      uses: actions/setup-java@v3 
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      id: build_variables
+      run: |
+          git branch
+          echo ::set-output name=REPO::"ubi8-deck-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: ./gradlew build --no-daemon -PskipTests 
+    - name: Login to Quay
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-dev
+        push: false
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - name: Get the image name
+      id: get-build-name  
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: |
+           imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+             echo $imageName
+             echo "deck=$imageName" >> $GITHUB_OUTPUT
+    - name: Checkout  repo
+      uses: actions/checkout@v3
+    - name: Get build name from bom
+      id: get-build-name-old
+      if: ${{ env.CHANGES_EXISTS == 'false' }}
+      run: |
+           imageName=$(yq '.services.deck.img' bom)
+             echo $imageName
+             echo "deckold=$imageName" >> $GITHUB_OUTPUT
+
+  build-echo:
+    outputs:
+      echo: ${{ steps.get-build-name.outputs.echo }}
+      echoold: ${{ steps.get-build-name-old.outputs.echoold }}
+    if: ${{ true }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx echo repo
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/echo-oes
+        ref: refs/heads/OES-1.30.x
+    - name: checking for changes
+      run: |
+       if [ $(git log --since="$(date) 00:00:00" --format=%H) ]; then 
+           echo "There are changes for Today $date"
+           git log --since="$(date) 00:00:00" --format=%H         
+           echo "CHANGES_EXISTS=true" >> $GITHUB_ENV
+         else
+           echo "No Changes for Today $date"
+           git log --since="$(date) 00:00:00" --format=%H
+           echo "CHANGES_EXISTS=false" >> $GITHUB_ENV
+         fi      
+         
+    - name: tag in OpsMx echo repo
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/echo-oes
+        ref: refs/heads/OES-1.30.x
+    - name: create tag
+      run: |
+        commit=$(git rev-parse HEAD)
+
+        # POST a new ref to repo via Github API
+        curl -s -X POST https://api.github.com/repos/yugaa22/echo-oes/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
+         {
+         "ref": "refs/tags/v-${{ github.run_number }}",
+         "sha": "$commit"
+        }
+        EOF
+        
+        git branch
+        git fetch --all        
+        git checkout v-${{ github.run_number }}
+        git branch 
+             
+    - name: checkout in OpsMx tag
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/echo-oes
+        ref: refs/tags/v-${{ github.run_number }}
+    - name: grale setup
+      uses: actions/setup-java@v3 
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      id: build_variables
+      run: |
+          git branch
+          echo ::set-output name=REPO::"ubi8-echo-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true echo-web:installDist -x test
+    - name: Login to Quay
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-dev
+        push: false
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - name: Get the image name
+      id: get-build-name  
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: |
+           imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+             echo $imageName
+             echo "echo=$imageName" >> $GITHUB_OUTPUT
+    - name: Checkout  repo
+      uses: actions/checkout@v3
+    - name: Get build name from bom
+      id: get-build-name-old
+      if: ${{ env.CHANGES_EXISTS == 'false' }}
+      run: |
+           imageName=$(yq '.services.echo.img' bom)
+             echo $imageName
+             echo "echoold=$imageName" >> $GITHUB_OUTPUT
+
+  
+     
+  build-fiat:
+    outputs:
+      fiat: ${{ steps.get-build-name.outputs.fiat }}
+      fiatold: ${{ steps.get-build-name-old.outputs.fiatold }}
+    if: ${{ true }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx fiat repo
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/fiat-oes
+        ref: refs/heads/OES-1.30.x
+    - name: checking for changes
+      run: |
+       if [ $(git log --since="$(date) 00:00:00" --format=%H) ]; then 
+           echo "There are changes for Today $date"
+           git log --since="$(date) 00:00:00" --format=%H         
+           echo "CHANGES_EXISTS=true" >> $GITHUB_ENV
+         else
+           echo "No Changes for Today $date"
+           git log --since="$(date) 00:00:00" --format=%H
+           echo "CHANGES_EXISTS=false" >> $GITHUB_ENV
+         fi      
+         
+    - name: tag in OpsMx fiat repo
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/fiat-oes
+        ref: refs/heads/OES-1.30.x
+    - name: create tag
+      run: |
+        commit=$(git rev-parse HEAD)
+
+        # POST a new ref to repo via Github API
+        curl -s -X POST https://api.github.com/repos/yugaa22/fiat-oes/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
+         {
+         "ref": "refs/tags/v-${{ github.run_number }}",
+         "sha": "$commit"
+        }
+        EOF
+        
+        git branch
+        git fetch --all        
+        git checkout v-${{ github.run_number }}
+        git branch 
+             
+    - name: checkout in OpsMx tag
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/fiat-oes
+        ref: refs/tags/v-${{ github.run_number }}
+    - name: grale setup
+      uses: actions/setup-java@v3 
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      id: build_variables
+      run: |
+          git branch
+          echo ::set-output name=REPO::"ubi8-fiat-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true fiat-web:installDist -x test
+    - name: Login to Quay
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-dev
+        push: false
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - name: Get the image name
+      id: get-build-name  
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: |
+           imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+             echo $imageName
+             echo "fiat=$imageName" >> $GITHUB_OUTPUT
+    - name: Checkout  repo
+      uses: actions/checkout@v3
+    - name: Get build name from bom
+      id: get-build-name-old
+      if: ${{ env.CHANGES_EXISTS == 'false' }}
+      run: |
+           imageName=$(yq '.services.fiat.img' bom)
+             echo $imageName
+             echo "fiatold=$imageName" >> $GITHUB_OUTPUT
+     
+  build-front50:
+    outputs:
+      front50: ${{ steps.get-build-name.outputs.front50 }}
+      front50old: ${{ steps.get-build-name-old.outputs.front50old }}
+    if: ${{ true }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout OpsMx front50 repo
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/front50-oes
+        ref: refs/heads/OES-1.30.x
+    - name: checking for changes
+      run: |
+       if [ $(git log --since="$(date) 00:00:00" --format=%H) ]; then 
+           echo "There are changes for Today $date"
+           git log --since="$(date) 00:00:00" --format=%H         
+           echo "CHANGES_EXISTS=true" >> $GITHUB_ENV
+         else
+           echo "No Changes for Today $date"
+           git log --since="$(date) 00:00:00" --format=%H
+           echo "CHANGES_EXISTS=false" >> $GITHUB_ENV
+         fi      
+         
+    - name: tag in OpsMx front50 repo
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/front50-oes
+        ref: refs/heads/OES-1.30.x
+    - name: create tag
+      run: |
+        commit=$(git rev-parse HEAD)
+
+        # POST a new ref to repo via Github API
+        curl -s -X POST https://api.github.com/repos/yugaa22/front50-oes/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
+         {
+         "ref": "refs/tags/v-${{ github.run_number }}",
+         "sha": "$commit"
+        }
+        EOF
+        
+        git branch
+        git fetch --all        
+        git checkout v-${{ github.run_number }}
+        git branch 
+             
+    - name: checkout in OpsMx tag
+      uses: actions/checkout@v3
+      with:
+        repository: yugaa22/front50-oes
+        ref: refs/tags/v-${{ github.run_number }}
+    - name: grale setup
+      uses: actions/setup-java@v3 
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: 'gradle'
+    - name: Set up QEMU
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      id: build_variables
+      run: |
+          git branch
+          echo ::set-output name=REPO::"ubi8-front50-cve"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+    - name: Build
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true front50-web:installDist -x test
+    - name: Login to Quay
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: docker/ubi8/Dockerfile-dev
+        push: false
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - name: Get the image name
+      id: get-build-name  
+      if: ${{ env.CHANGES_EXISTS == 'true' }}
+      run: |
+           imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+             echo $imageName
+             echo "front50=$imageName" >> $GITHUB_OUTPUT
+    - name: Checkout  repo
+      uses: actions/checkout@v3
+    - name: Get build name from bom
+      id: get-build-name-old
+      if: ${{ env.CHANGES_EXISTS == 'false' }}
+      run: |
+           imageName=$(yq '.services.front50.img' bom)
+             echo $imageName
+             echo "front50old=$imageName" >> $GITHUB_OUTPUT
+     
   build-igor:
     outputs:
       igor: ${{ steps.get-build-name.outputs.igor }}
@@ -114,116 +653,10 @@ jobs:
              echo $imageName
              echo "igorold=$imageName" >> $GITHUB_OUTPUT
      
-  build-echo:
-    outputs:
-      echo: ${{ steps.get-build-name.outputs.echo }}
-      echoold: ${{ steps.get-build-name-old.outputs.echoold }}
-    if: ${{ true }}
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout OpsMx echo repo
-      uses: actions/checkout@v3
-      with:
-        repository: yugaa22/echo-oes
-        ref: refs/heads/OES-1.30.x
-    - name: checking for changes
-      run: |
-       if [ $(git log --since="$(date) 00:00:00" --format=%H) ]; then 
-           echo "There are changes for Today $date"
-           git log --since="$(date) 00:00:00" --format=%H         
-           echo "CHANGES_EXISTS=true" >> $GITHUB_ENV
-         else
-           echo "No Changes for Today $date"
-           git log --since="$(date) 00:00:00" --format=%H
-           echo "CHANGES_EXISTS=false" >> $GITHUB_ENV
-         fi      
-         
-    - name: tag in OpsMx echo repo
-      uses: actions/checkout@v3
-      with:
-        repository: yugaa22/echo-oes
-        ref: refs/heads/OES-1.30.x
-    - name: create tag
-      run: |
-        commit=$(git rev-parse HEAD)
-
-        # POST a new ref to repo via Github API
-        curl -s -X POST https://api.github.com/repos/yugaa22/echo-oes/git/refs -H "Authorization: token ${{secrets.GIT_TOKEN}}"  -d @- << EOF
-         {
-         "ref": "refs/tags/v-${{ github.run_number }}",
-         "sha": "$commit"
-        }
-        EOF
-        
-        git branch
-        git fetch --all        
-        git checkout v-${{ github.run_number }}
-        git branch 
-             
-    - name: checkout in OpsMx tag
-      uses: actions/checkout@v3
-      with:
-        repository: yugaa22/echo-oes
-        ref: refs/tags/v-${{ github.run_number }}
-    - name: grale setup
-      uses: actions/setup-java@v3 
-      if: ${{ env.CHANGES_EXISTS == 'true' }}
-      with:
-        distribution: temurin
-        java-version: 17
-        cache: 'gradle'
-    - name: Set up QEMU
-      if: ${{ env.CHANGES_EXISTS == 'true' }}
-      uses: docker/setup-qemu-action@v2
-    - name: Set up Docker Buildx
-      if: ${{ env.CHANGES_EXISTS == 'true' }}
-      uses: docker/setup-buildx-action@v2
-    - name: Prepare build variables
-      if: ${{ env.CHANGES_EXISTS == 'true' }}
-      id: build_variables
-      run: |
-          git branch
-          echo ::set-output name=REPO::"ubi8-echo-cve"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
-    - name: Build
-      if: ${{ env.CHANGES_EXISTS == 'true' }}
-      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true echo-web:installDist -x test
-    - name: Login to Quay
-      if: ${{ env.CHANGES_EXISTS == 'true' }}
-      uses: docker/login-action@v1
-      with:
-        registry: quay.io
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_KEY }}
-    - name: dockerBuildpush
-      if: ${{ env.CHANGES_EXISTS == 'true' }}
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        file: docker/ubi8/Dockerfile-dev
-        push: false
-        tags: |
-          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
-    - name: Get the image name
-      id: get-build-name  
-      if: ${{ env.CHANGES_EXISTS == 'true' }}
-      run: |
-           imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
-             echo $imageName
-             echo "echo=$imageName" >> $GITHUB_OUTPUT
-    - name: Checkout  repo
-      uses: actions/checkout@v3
-    - name: Get build name from bom
-      id: get-build-name-old
-      if: ${{ env.CHANGES_EXISTS == 'false' }}
-      run: |
-           imageName=$(yq '.services.echo.img' bom)
-             echo $imageName
-             echo "echoold=$imageName" >> $GITHUB_OUTPUT
           
   outputs:
     runs-on: ubuntu-latest
-    needs: [build-igor,build-echo]
+    needs: [build-clouddriver,build-deck,build-echo,build-fiat,build-front50,build-igor]
     steps:
     - name: Check out Repository
       uses: actions/checkout@v3
@@ -235,10 +668,67 @@ jobs:
   
           cp bom bom-old
         
-          echo ${{ needs.build-echo.outputs.echo }}        
-          echo ${{ needs.build-echo.outputs.echoold }}
-        
-           if [ '${{ needs.build-igor.outputs.igor }}' ]; then
+        if [ '${{ needs.build-clouddriver.outputs.clouddriver }}' ]; then
+             img=${{ needs.build-clouddriver.outputs.clouddriver }}
+             echo $img
+             echo "Updating bom file built image"
+             yq e -i '.services.clouddriver.img = "${{ needs.build-clouddriver.outputs.clouddriver }}"' bom 
+           else
+             img=${{ needs.build-clouddriver.outputs.clouddriverold }}
+             echo $img
+             echo "Updating bom file with old bom"
+             yq e -i '.services.clouddriver.img = "${{ needs.build-clouddriver.outputs.clouddriverold }}"' bom 
+          fi 
+          
+           if [ '${{ needs.build-deck.outputs.deck }}' ]; then
+             img=${{ needs.build-deck.outputs.deck }}
+             echo $img
+             echo "Updating bom file built image"
+             yq e -i '.services.deck.img = "${{ needs.build-deck.outputs.deck }}"' bom 
+           else
+             img=${{ needs.build-deck.outputs.deckold }}
+             echo $img
+             echo "Updating bom file with old bom"
+             yq e -i '.services.deck.img = "${{ needs.build-deck.outputs.deckold }}"' bom 
+          fi
+          
+           if [ '${{ needs.build-echo.outputs.echo }}' ]; then
+             img=${{ needs.build-echo.outputs.echo }}
+             echo $img
+             echo "Updating bom file built image"
+             yq e -i '.services.echo.img = "${{ needs.build-echo.outputs.echo }}"' bom 
+           else
+             img=${{ needs.build-echo.outputs.echoold }}
+             echo $img
+             echo "Updating bom file with old bom"
+             yq e -i '.services.echo.img = "${{ needs.build-echo.outputs.echoold }}"' bom 
+          fi
+
+          if [ '${{ needs.build-fiat.outputs.fiat }}' ]; then
+             img=${{ needs.build-fiat.outputs.fiat }}
+             echo $img
+             echo "Updating bom file built image"
+             yq e -i '.services.fiat.img = "${{ needs.build-fiat.outputs.fiat }}"' bom 
+           else
+             img=${{ needs.build-fiat.outputs.fiatold }}
+             echo $img
+             echo "Updating bom file with old bom"
+             yq e -i '.services.fiat.img = "${{ needs.build-fiat.outputs.fiatold }}"' bom 
+          fi 
+          
+           if [ '${{ needs.build-front50.outputs.front50 }}' ]; then
+             img=${{ needs.build-front50.outputs.front50 }}
+             echo $img
+             echo "Updating bom file built image"
+             yq e -i '.services.front50.img = "${{ needs.build-front50.outputs.front50 }}"' bom 
+           else
+             img=${{ needs.build-front50.outputs.front50old }}
+             echo $img
+             echo "Updating bom file with old bom"
+             yq e -i '.services.front50.img = "${{ needs.build-front50.outputs.front50old }}"' bom 
+          fi
+          
+          if [ '${{ needs.build-igor.outputs.igor }}' ]; then
              img=${{ needs.build-igor.outputs.igor }}
              echo $img
              echo "Updating bom file built image"
@@ -248,18 +738,6 @@ jobs:
              echo $img
              echo "Updating bom file with old bom"
              yq e -i '.services.igor.img = "${{ needs.build-igor.outputs.igorold }}"' bom 
-          fi 
-          
-           if [ '${{ needs.build-echo.outputs.echo }}' ]; then
-             img=${{ needs.build-echo.outputs.echo }}
-             echo $img
-             echo "Updating bom file built image"
-             yq e -i '.services.echo.img = "${{ needs.build-echo.outputs.echo }}"' bom 
-           else
-             img=${{ needs.build-igor.outputs.igorold }}
-             echo $img
-             echo "Updating bom file with old bom"
-             yq e -i '.services.echo.img = "${{ needs.build-echo.outputs.echoold }}"' bom 
           fi 
           
           git config --global user.email "yugaa22@gmail.com"
