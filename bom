@@ -2,7 +2,7 @@ services:
   "clouddriver":
     img: "quay.io/opsmxpublic/ubi8-clouddriver-cve:125de0e40-202305311410-dev"
   "deck":
-    img: ""
+    img: "quay.io/opsmxpublic/ubi8-deck-cve:29155a21e-202305301427"
   "echo":
     img: "quay.io/opsmxpublic/ubi8-echo-cve:4bfb59a5-202306151043"
   "fiat":
