@@ -120,7 +120,7 @@ jobs:
     outputs:
       deck: ${{ steps.get-build-name.outputs.deck }}
       deckold: ${{ steps.get-build-name-old.outputs.deckold }}
-    if: ${{ true }}
+    if: ${{ flase }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout OpsMx deck repo
