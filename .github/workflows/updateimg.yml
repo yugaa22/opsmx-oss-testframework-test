@@ -69,7 +69,8 @@ jobs:
           git clone --depth 1 https://github.com/yugaa22/cve-target.git target-repo
 
   
-    - name: Copy files        
+    - name: Copy files     
+      working-directory: ./target-repo
       run: | 
           #ls -ltra
           
