@@ -17,12 +17,12 @@ jobs:
     - name: Checkout OpsMx clouddriver repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/clouddriver-oes
-        ref: refs/heads/OES-1.30.1
+        repository: opsmx/clouddriver
+        ref: refs/heads/1.30.1_v5.80.1
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
@@ -30,7 +30,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-clouddriver-cve"
+          echo ::set-output name=REPO::"ubi8-clouddriver"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true clouddriver-web:installDist -x test
@@ -44,7 +44,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-dev
+        file: docker/ubi8/Dockerfile
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -62,8 +62,8 @@ jobs:
     - name: Checkout OpsMx deck repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/deck-oes
-        ref: refs/heads/OES-1.30.1
+        repository: opsmx/deck
+        ref: refs/heads/1.30.0_v3.13.0
     - uses: actions/setup-java@v3
       with:
         distribution: zulu
@@ -115,12 +115,12 @@ jobs:
     - name: Checkout OpsMx echo repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/echo-oes
-        ref: refs/heads/OES-1.30.1
+        repository: opsmx/echo
+        ref: refs/heads/1.30.1_v2.37.1
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
@@ -128,7 +128,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-echo-cve"
+          echo ::set-output name=REPO::"ubi8-echo"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true echo-web:installDist -x test
@@ -142,7 +142,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-dev
+        file: docker/ubi8/Dockerfile
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -160,12 +160,12 @@ jobs:
     - name: Checkout OpsMx fiat repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/fiat-oes
-        ref: refs/heads/OES-1.30.1
+        repository: opsmx/fiat
+        ref: refs/heads/1.30.1_v1.37.1
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
@@ -173,7 +173,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-fiat-cve"
+          echo ::set-output name=REPO::"ubi8-fiat"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true fiat-web:installDist -x test
@@ -187,7 +187,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-dev
+        file: docker/ubi8/Dockerfile
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -206,12 +206,12 @@ jobs:
     - name: Checkout OpsMx front50 repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/front50-oes
-        ref: refs/heads/OES-1.30.1
+        repository: opsmx/front50
+        ref: refs/heads/1.30.1_v2.28.1
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
@@ -219,7 +219,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-front50-cve"
+          echo ::set-output name=REPO::"ubi8-front50"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true front50-web:installDist -x test
@@ -233,7 +233,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-dev
+        file: docker/ubi8/Dockerfile
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -251,12 +251,12 @@ jobs:
     - name: Checkout OpsMx gate repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/gate-oes
-        ref: refs/heads/OES-1.30.1
+        repository: opsmx/gate
+        ref: refs/heads/1.30.1_v6.58.1
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
@@ -264,7 +264,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-gate-cve"
+          echo ::set-output name=REPO::"ubi8-gate"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true gate-web:installDist -x test
@@ -279,8 +279,8 @@ jobs:
       with:
         context: .
         build-args: |
-            CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.2-rc1
-        file: docker/ubi8/Dockerfile-dev
+            CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.1-rc7
+        file: docker/ubi8/Dockerfile
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -298,12 +298,12 @@ jobs:
     - name: Checkout OpsMx igor repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/igor-oes
-        ref: refs/heads/OES-1.30.1
+        repository: opsmx/igor
+        ref: refs/heads/1.30.1_v4.11.1
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
@@ -311,7 +311,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-igor-cve"
+          echo ::set-output name=REPO::"ubi8-igor"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
@@ -325,7 +325,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-dev
+        file: docker/ubi8/Dockerfile
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -344,12 +344,12 @@ jobs:
     - name: Checkout OpsMx kayenta repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/kayenta-oes
-        ref: refs/heads/OES-1.30.1
+        repository: opsmx/kayenta
+        ref: refs/heads/1.30.1_v2.36.1
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
@@ -357,7 +357,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-kayenta-cve"
+          echo ::set-output name=REPO::"ubi8-kayenta"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true kayenta-web:installDist -x test
@@ -371,7 +371,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-fips
+        file: docker/ubi8/Dockerfile
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -390,12 +390,12 @@ jobs:
     - name: Checkout OpsMx orca repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/orca-oes
-        ref: refs/heads/OES-1.30.1
+        repository: opsmx/orca
+        ref: refs/heads/1.30.1_v8.31.1
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
@@ -403,7 +403,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-orca-cve"
+          echo ::set-output name=REPO::"ubi8-orca"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true orca-web:installDist -x test
@@ -418,8 +418,8 @@ jobs:
       with:
         context: .
         build-args: |
-            CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.2-rc1
-        file: docker/ubi8/Dockerfile-dev
+            CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.1-rc7
+        file: docker/ubi8/Dockerfile
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -438,12 +438,12 @@ jobs:
     - name: Checkout OpsMx rosco repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/rosco-oes
-        ref: refs/heads/OES-1.30.1
+        repository: opsmx/rosco
+        ref: refs/heads/1.30.1_v1.13.1
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: zulu
+        java-version: 11
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
@@ -451,7 +451,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-rosco-cve"
+          echo ::set-output name=REPO::"ubi8-rosco"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true rosco-web:installDist -x test
@@ -465,7 +465,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile-dev
+        file: docker/ubi8/Dockerfile
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
