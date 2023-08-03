@@ -487,9 +487,13 @@ jobs:
     needs: [build-clouddriver,build-deck,build-echo,build-fiat,build-front50,build-gate,build-igor,build-kayenta,build-orca,build-rosco]
     steps:
     - name: Che4ck out repository code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v3     
+      with:
+        repository: yugaa22/cve-target
+        ref: refs/heads/main
     - run: | 
-        
+          ls -ltra
+          
           echo artifactId: ${{ needs.build-clouddriver.outputs.clouddriver }} > default/service-settings/clouddriver.yml
           echo artifactId: ${{ needs.build-deck.outputs.deck }} > default/service-settings/deck.yml
           echo artifactId: ${{ needs.build-echo.outputs.echo }} > default/service-settings/echo.yml
