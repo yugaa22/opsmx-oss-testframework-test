@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       clouddriver: ${{ steps.get-build-name.outputs.clouddriver }}
-    if: ${{ true }}
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx clouddriver repo
       uses: actions/checkout@v3
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       deck: ${{ steps.get-build-name.outputs.deck }}
-    if: ${{ true }}
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx deck repo
       uses: actions/checkout@v3
@@ -142,6 +142,8 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
+        build-args: |
+            CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.1-rc7
         file: docker/ubi8/Dockerfile
         push: true
         tags: |
@@ -155,7 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       fiat: ${{ steps.get-build-name.outputs.fiat }}
-    if: ${{ true }}
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx fiat repo
       uses: actions/checkout@v3
@@ -201,7 +203,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       front50: ${{ steps.get-build-name.outputs.front50 }}
-    if: ${{ true }}
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx front50 repo
       uses: actions/checkout@v3
@@ -267,7 +269,12 @@ jobs:
           echo ::set-output name=REPO::"ubi8-gate"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
-      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true gate-web:installDist -x test
+      run: |
+         ./gradlew --no-daemon -PenableCrossCompilerPlugin=true gate-web:installDist -x test
+
+         ls -ltra
+
+         cp docker/custom-plugin.json .
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
@@ -292,7 +299,7 @@ jobs:
   build-igor:
     outputs:
       igor: ${{ steps.get-build-name.outputs.igor }}
-    if: ${{ true }}
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout OpsMx igor repo
@@ -339,7 +346,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       kayenta: ${{ steps.get-build-name.outputs.kayenta }}
-    if: ${{ true }}
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx kayenta repo
       uses: actions/checkout@v3
@@ -385,7 +392,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       orca: ${{ steps.get-build-name.outputs.orca }}
-    if: ${{ true }}
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx orca repo
       uses: actions/checkout@v3
@@ -433,7 +440,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       rosco: ${{ steps.get-build-name.outputs.rosco }}
-    if: ${{ true }}
+    if: ${{ false }}
     steps:
     - name: Checkout OpsMx rosco repo
       uses: actions/checkout@v3
