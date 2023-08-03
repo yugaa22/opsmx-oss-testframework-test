@@ -2,7 +2,7 @@ on:
   push:
     branches:
     - main
-    - release-*
+    - release-* 
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
   CONTAINER_REGISTRY: quay.io/opsmxpublic
