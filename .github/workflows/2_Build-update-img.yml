@@ -128,7 +128,7 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-echo"
+          echo ::set-output name=REPO::"ubi8-oes-echo"
           echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true echo-web:installDist -x test
