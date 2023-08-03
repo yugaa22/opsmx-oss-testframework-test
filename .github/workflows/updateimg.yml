@@ -72,7 +72,9 @@ jobs:
     - name: Copy files     
       working-directory: ./target-repo
       run: | 
-          #ls -ltra
+          ls -ltra target-repo/default/service-settings
+
+          touch target-repo/default/service-settings/rosco.yml
           
           echo artifactId: ${{ needs.build-rosco.outputs.rosco }} > target-repo/default/service-settings/rosco.yml
             
