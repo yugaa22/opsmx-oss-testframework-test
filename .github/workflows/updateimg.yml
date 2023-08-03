@@ -29,7 +29,6 @@ jobs:
            
           ls -ltra default/service-settings
 
-          touch default/service-settings/rosco.yml
           
           echo artifactId:  > default/service-settings/rosco.yml
             
