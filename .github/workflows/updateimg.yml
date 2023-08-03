@@ -27,11 +27,11 @@ jobs:
 
           ls -ltra
            
-          ls -ltra target-repo/default/service-settings
+          ls -ltra default/service-settings
 
-          touch target-repo/default/service-settings/rosco.yml
+          touch default/service-settings/rosco.yml
           
-          echo artifactId:  > target-repo/default/service-settings/rosco.yml
+          echo artifactId:  > default/service-settings/rosco.yml
             
           git add .
           
