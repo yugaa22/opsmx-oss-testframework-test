@@ -500,29 +500,41 @@ jobs:
     - name: Copy files     
       working-directory: ./target-repo
       run: | 
-          ls -ltra
+          #ls -ltra
            
-          ls -ltra default/service-settings
+          #ls -ltra default/service-settings
+
+          yq eval '(.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}")' -i default/service-settings/clouddriver.yml
+          yq eval '(.artifactId |= "${{ needs.build-deck.outputs.deck }}")' -i default/service-settings/deck.yml
+          yq eval '(.artifactId |= "${{ needs.build-echo.outputs.echo }}")' -i default/service-settings/echo.yml
+          yq eval '(.artifactId |= "${{ needs.build-fiat.outputs.fiat }}")' -i default/service-settings/fiat.yml
+          yq eval '(.artifactId |= "${{ needs.build-front50.outputs.front50 }}")' -i default/service-settings/front50.yml
+          yq eval '(.artifactId |= "${{ needs.build-gate.outputs.gate }}")' -i default/service-settings/gate.yml
+          yq eval '(.artifactId |= "${{ needs.build-igor.outputs.igor }}")' -i default/service-settings/igor.yml
+          yq eval '(.artifactId |= "${{ needs.build-kayenta.outputs.kayenta }}")' -i default/service-settings/kayenta.yml
+          yq eval '(.artifactId |= "${{ needs.build-orca.outputs.orca }}")' -i default/service-settings/orca.yml
+          yq eval '(.artifactId |= "${{ needs.build-rosco.outputs.rosco }}")' -i default/service-settings/rosco.yml
+
           
-          echo artifactId: ${{ needs.build-clouddriver.outputs.clouddriver }} > default/service-settings/clouddriver.yml
+          #echo artifactId: ${{ needs.build-clouddriver.outputs.clouddriver }} > default/service-settings/clouddriver.yml
           
-          echo artifactId: ${{ needs.build-deck.outputs.deck }} > default/service-settings/deck.yml
+          #echo artifactId: ${{ needs.build-deck.outputs.deck }} > default/service-settings/deck.yml
           
-          echo artifactId: ${{ needs.build-echo.outputs.echo }} > default/service-settings/echo.yml
+          #echo artifactId: ${{ needs.build-echo.outputs.echo }} > default/service-settings/echo.yml
           
-          echo artifactId: ${{ needs.build-fiat.outputs.fiat }} > default/service-settings/fiat.yml
+          #echo artifactId: ${{ needs.build-fiat.outpus.fiat }} > default/service-settings/fiat.yml
           
-          echo artifactId: ${{ needs.build-front50.outputs.front50 }} > default/service-settings/front50.yml
+          #echo artifactId: ${{ needs.build-front50.outputs.front50 }} > default/service-settings/front50.yml
           
-          echo artifactId: ${{ needs.build-gate.outputs.gate }} > default/service-settings/gate.yml
+          #echo artifactId: ${{ needs.build-gate.outputs.gate }} > default/service-settings/gate.yml
           
-          echo artifactId: ${{ needs.build-igor.outputs.igor }} > default/service-settings/igor.yml
+          #echo artifactId: ${{ needs.build-igor.outputs.igor }} > default/service-settings/igor.yml
           
-          echo artifactId: ${{ needs.build-kayenta.outputs.kayenta }} > default/service-settings/kayenta.yml
+          #echo artifactId: ${{ needs.build-kayenta.outputs.kayenta }} > default/service-settings/kayenta.yml
           
-          echo artifactId: ${{ needs.build-orca.outputs.orca }} > default/service-settings/orca.yml
+          #echo artifactId: ${{ needs.build-orca.outputs.orca }} > default/service-settings/orca.yml
           
-          echo artifactId: ${{ needs.build-rosco.outputs.rosco }} > default/service-settings/rosco.yml
+          #echo artifactId: ${{ needs.build-rosco.outputs.rosco }} > default/service-settings/rosco.yml
           
           git add default/service-settings/
           
