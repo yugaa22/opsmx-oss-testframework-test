@@ -62,24 +62,25 @@ jobs:
       run: |
           git config --global user.email "yugaa22@gmail.com"
           git config --global user.name "yugaa22"
-          
-    - name: Check out repository code
-      uses: actions/checkout@v3     
-      with:
-        repository: yugaa22/cve-target
-        ref: refs/heads/main
+
+
+    - name: Clone target repo
+      run: |
+          git clone --depth 1 https://github.com/yugaa22/cve-target.git target-repo
+
+  
     - name: Copy files        
       run: | 
-          ls -ltra
+          #ls -ltra
           
-          echo artifactId: ${{ needs.build-rosco.outputs.rosco }} > default/service-settings/rosco.yml
-          
-          #yq e -i '.deploymentConfigurations[0].version = "1.30.1"' config 
- 
-          
+          echo artifactId: ${{ needs.build-rosco.outputs.rosco }} > target-repo/default/service-settings/rosco.yml
+            
           git add .
+          
           git commit -m "updating master Branch images into service settings"
+          
           git remote set-url origin https://yugaa22:${{ secrets.GIT_TOKEN }}@github.com/yugaa22/cve-target.git
+          
           git push
       env:
          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
