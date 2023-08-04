@@ -1,18 +1,47 @@
 name: Setup Spinnaker
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      namespace:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Spinnaker namespace'
+        # Default value if no value is explicitly provided
+        default: 'spinnaker'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      releasename:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Helm Release'
+        # Default value if no value is explicitly provided
+        default: 'oss-spin'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+        
 jobs:
   OpsMx-Spinnaker:
     runs-on: ubuntu-latest
     steps:
+      - name: Download artifacts from previous runs
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GIT_TOKEN}}
+          workflow: 1_terraform_infra.yml
+      - name: Display structure of downloaded files
+        run: |
+           ls -ltra
+           ls -ltra kubeconfigfile           
+           kubectl get ns  --kubeconfig kubeconfig-artifacts/kubefile
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Set up Kubernetes
         uses: azure/k8s-set-context@v1
         with:
-          kubeconfig: ${{ secrets.KUBECONFIGTEST }}
+          kubeconfig: kubeconfig-artifacts/kubefile
 
       - name: Install Helm
         run: |
@@ -27,9 +56,9 @@ jobs:
       - name: Setup OpsMx Helm chart and Install
         run: |
           
-           kubectl create ns spinnaker
+           kubectl create ns ${{ inputs.namespace}}
             
-           kubectl -n spinnaker create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam='${{ secrets.GIT_ACCOUNT_DATA }}' --from-literal=gituser=yugaa22 --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
+           kubectl -n ${{ inputs.namespace}} create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam='${{ secrets.GIT_ACCOUNT_DATA }}' --from-literal=gituser=${{ secrets.GIT_USERNAME }} --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
           
-           helm upgrade --install  oss-spin-test spinnaker/spinnaker --set halyard.gitops.enabled=true --set spinnakerVersion=1.30.1 --timeout 600s -n spinnaker
+           helm -n ${{ inputs.namespace}} upgrade --install  ${{ inputs.releasename}} spinnaker/spinnaker --set halyard.gitops.enabled=true --set spinnakerVersion=1.30.1 --timeout 600s
 
