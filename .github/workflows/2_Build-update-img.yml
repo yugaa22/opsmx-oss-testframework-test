@@ -572,6 +572,34 @@ jobs:
             echo "rosco=$imageName" >> $GITHUB_OUTPUT  
 
 
+    - name: Create Secret
+      env:
+          ACCESS_TOKEN: ${{ inputs.gittoken }}
+          ORG: ${{ inputs.organisation }}
+          #SECRET_NAME: GIT_USERNAME  # Replace with the name you want for the secret
+          GITHUB_USERNAME: ${{inputs.gitusername}}
+          GITHUB_REPO: ${{ inputs.repository }}
+          #LOCAL_FILE_PATH: "ninja-training-cluster.config"
+      run: |
+
+             # Base64 encode the content            
+             GITUSERNAME_CONTENT=$(echo $${{inputs.gitusername}} | base64 )
+             GITTOKEN_CONTENT=$(echo $${{inputs.gittoken}} | base64 )
+
+              # Fetch the public key for the repository
+              RESPONSE=$(curl -X GET -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${ACCESS_TOKEN}" "https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/actions/secrets/public-key")
+              
+              # Extract the key_id and key from the response
+              KEY_ID=$(echo "$RESPONSE" | jq -r '.key_id')
+              #KEY=$(echo "$RESPONSE" | jq -r '.key')
+
+              curl -X PUT "https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/actions/secrets/GIT_USERNAME"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITUSERNAME_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
+
+
+              curl -X PUT "https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/actions/secrets/GIT_TOKEN"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITTOKEN_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
+
+
+
 
 
   outputs:
