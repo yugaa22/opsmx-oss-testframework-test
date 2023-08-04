@@ -587,16 +587,16 @@ jobs:
              GITTOKEN_CONTENT=$(echo $${{inputs.gittoken}} | base64 )
 
               # Fetch the public key for the repository
-              RESPONSE=$(curl -X GET -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${ACCESS_TOKEN}" "https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/actions/secrets/public-key")
+              RESPONSE=$(curl -X GET -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${ACCESS_TOKEN}" "https://api.github.com/repos/${ORG}/${GITHUB_REPO}/actions/secrets/public-key")
               
               # Extract the key_id and key from the response
               KEY_ID=$(echo "$RESPONSE" | jq -r '.key_id')
               #KEY=$(echo "$RESPONSE" | jq -r '.key')
 
-              curl -X PUT "https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/actions/secrets/GIT_USERNAME"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITUSERNAME_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
+              curl -X PUT "https://api.github.com/repos/${ORG}/${GITHUB_REPO}/actions/secrets/GIT_USERNAME"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITUSERNAME_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
 
 
-              curl -X PUT "https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/actions/secrets/GIT_TOKEN"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITTOKEN_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
+              curl -X PUT "https://api.github.com/repos/${ORG}/${GITHUB_REPO}/actions/secrets/GIT_TOKEN"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITTOKEN_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
 
 
 
