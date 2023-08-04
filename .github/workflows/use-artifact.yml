@@ -1,0 +1,23 @@
+name: Use Kubeconfig 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  use-kubeconfig:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts from previous runs
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GIT_TOKEN}}
+          workflow: generate-kubeconfig.yml
+      - name: Display structure of downloaded files
+        run: |
+           ls -ltra
+
+           ls -ltra kubeconfig-artifacts
+
+           
+           kubectl get ns  --kubeconfig kubeconfig-artifacts/ninja-training-cluster.config
