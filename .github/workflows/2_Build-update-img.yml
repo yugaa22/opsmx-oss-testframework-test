@@ -12,6 +12,43 @@ on:
         required: false
         # The data type of the input
         type: string
+      organisation:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Your Git Organisation to be used for GitOps'
+        # Default value if no value is explicitly provided
+        default: 'opsmx'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      repository:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Your Git Repository to be used for GitOps'
+        # Default value if no value is explicitly provided
+        default: 'cve-target'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      gitusername:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Your Git Username'
+        # Default value if no value is explicitly provided
+        default: 'yugaa22'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      gittoken:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Your Git Token'
+        # Default value if no value is explicitly provided
+        default: '1232424'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+        
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
   CONTAINER_REGISTRY: quay.io/opsmxpublic
@@ -548,7 +585,9 @@ jobs:
 
     - name: Clone target repo
       run: |
-          git clone https://github.com/yugaa22/cve-target.git target-repo
+
+      
+          git clone https://github.com/${{ inputs.organisation }}/${{ inputs.repository }} target-repo
   
     - name: Copy files     
       working-directory: ./target-repo
@@ -601,7 +640,9 @@ jobs:
           
           git commit -m "updating 1.30.1 Branch images into service settings"
           
-          git remote set-url origin https://yugaa22:${{ secrets.GIT_TOKEN }}@github.com/yugaa22/cve-target.git
+          #git remote set-url origin https://${{ inputs.gitusername }}:${{ secrets.GIT_TOKEN }}@github.com/${{ inputs.organisation }}/${{ inputs.repository }}
+
+          git remote set-url origin https://${{ inputs.gitusername }}:${{ inputs.gittoken }}@github.com/${{ inputs.organisation }}/${{ inputs.repository }}
           
           git push
       env:
