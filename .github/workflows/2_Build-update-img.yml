@@ -121,7 +121,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"clouddriver"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.cloudriver-version }}-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.cloudriver-version }}-oss-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true clouddriver-web:installDist -x test
     - name: Login to Quay
@@ -167,7 +167,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"deck"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.deck-version }})-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.deck-version }})-oss-ubuntu"
     - name: Build
       run: |
            # cp docker/ubi8/setupapache2.sh docker/setup-apache2.sh
@@ -221,7 +221,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"echo"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.echo-version }}-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.echo-version }}-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true echo-web:installDist -x test
     - name: Login to Quay
@@ -267,7 +267,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"fiat"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.fiat-version }}-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.fiat-version }}-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true fiat-web:installDist -x test
     - name: Login to Quay
@@ -314,7 +314,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"front50"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.front50-version }}-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.front50-version }}-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true front50-web:installDist -x test
     - name: Login to Quay
@@ -360,7 +360,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"gate"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.gate-version }}-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.gate-version }}-oss-ubuntu"
     - name: Build
       run: |
          ./gradlew --no-daemon -PenableCrossCompilerPlugin=true gate-web:installDist -x test
@@ -411,7 +411,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"igor"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.igor-version }}-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.igor-version }}-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
     - name: Login to Quay
@@ -458,7 +458,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"kayenta"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.kayenta-version }}-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.kayenta-version }}-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true kayenta-web:installDist -x test
     - name: Login to Quay
@@ -505,7 +505,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"orca"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.orca-version }}-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.orca-version }}-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true orca-web:installDist -x test
     - name: Login to Quay
@@ -552,7 +552,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"rosco"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.rosco-version }}-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.rosco-version }}-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true rosco-web:installDist -x test
     - name: Login to Quay
