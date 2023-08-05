@@ -16,7 +16,7 @@ on:
         # Friendly description to be shown in the UI instead of 'name'
         description: 'Your Git Organisation to be used for GitOps'
         # Default value if no value is explicitly provided
-        default: 'opsmx'
+        default: 'spinnaker'
         # Input has to be provided for the workflow to run
         required: false
         # The data type of the input
@@ -69,7 +69,7 @@ jobs:
       rosco-version: ${{ steps.get-bom.outputs.rosco-version }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx clouddriver repo
+    - name: Checkout spinnaker clouddriver repo
       uses: actions/checkout@v3
     - id: get-bom
       run: |
@@ -104,10 +104,10 @@ jobs:
       clouddriver: ${{ steps.get-build-name.outputs.clouddriver }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx clouddriver repo
+    - name: Checkout spinnaker clouddriver repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/clouddriver
+        repository: spinnaker/clouddriver
         ref: refs/tags/v${{ needs.get-bom.outputs.cloudriver-version }}
     - uses: actions/setup-java@v3
       with:
@@ -121,7 +121,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"clouddriver"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.cloudriver-version }}-oss-oss-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.cloudriver-version }}-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true clouddriver-web:installDist -x test
     - name: Login to Quay
@@ -150,10 +150,10 @@ jobs:
       deck: ${{ steps.get-build-name.outputs.deck }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx deck repo
+    - name: Checkout spinnaker deck repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/deck
+        repository: spinnaker/deck
         ref: refs/tags/v${{ needs.get-bom.outputs.deck-version }}
     - uses: actions/setup-java@v3
       with:
@@ -204,10 +204,10 @@ jobs:
       echo: ${{ steps.get-build-name.outputs.echo }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx echo repo
+    - name: Checkout spinnaker echo repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/echo
+        repository: spinnaker/echo
         ref: refs/tags/v${{ needs.get-bom.outputs.echo-version }}
     - uses: actions/setup-java@v3
       with:
@@ -250,10 +250,10 @@ jobs:
       fiat: ${{ steps.get-build-name.outputs.fiat }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx fiat repo
+    - name: Checkout spinnaker fiat repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/fiat
+        repository: spinnaker/fiat
         ref: refs/tags/v${{ needs.get-bom.outputs.fiat-version }}
     - uses: actions/setup-java@v3
       with:
@@ -297,10 +297,10 @@ jobs:
       front50: ${{ steps.get-build-name.outputs.front50 }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx front50 repo
+    - name: Checkout spinnaker front50 repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/front50
+        repository: spinnaker/front50
         ref: refs/tags/v${{ needs.get-bom.outputs.front50-version }}
     - uses: actions/setup-java@v3
       with:
@@ -343,10 +343,10 @@ jobs:
       gate: ${{ steps.get-build-name.outputs.gate }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx gate repo
+    - name: Checkout spinnaker gate repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/gate
+        repository: spinnaker/gate
         ref: refs/tags/v${{ needs.get-bom.outputs.gate-version }}
     - uses: actions/setup-java@v3
       with:
@@ -394,10 +394,10 @@ jobs:
       igor: ${{ steps.get-build-name.outputs.igor }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx igor repo
+    - name: Checkout spinnaker igor repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/igor
+        repository: spinnaker/igor
         ref: refs/tags/v${{ needs.get-bom.outputs.igor-version }}
     - uses: actions/setup-java@v3
       with:
@@ -441,10 +441,10 @@ jobs:
       kayenta: ${{ steps.get-build-name.outputs.kayenta }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx kayenta repo
+    - name: Checkout spinnaker kayenta repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/kayenta
+        repository: spinnaker/kayenta
         ref: refs/tags/v${{ needs.get-bom.outputs.kayenta-version }}
     - uses: actions/setup-java@v3
       with:
@@ -488,10 +488,10 @@ jobs:
       orca: ${{ steps.get-build-name.outputs.orca }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx orca repo
+    - name: Checkout spinnaker orca repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/orca
+        repository: spinnaker/orca
         ref: refs/tags/v${{ needs.get-bom.outputs.orca-version }}
     - uses: actions/setup-java@v3
       with:
@@ -535,10 +535,10 @@ jobs:
       rosco: ${{ steps.get-build-name.outputs.rosco }}
     if: ${{ true }}
     steps:
-    - name: Checkout OpsMx rosco repo
+    - name: Checkout spinnaker rosco repo
       uses: actions/checkout@v3
       with:
-        repository: opsmx/rosco
+        repository: spinnaker/rosco
         ref: refs/tags/v${{ needs.get-bom.outputs.rosco-version }}
     - uses: actions/setup-java@v3
       with:
