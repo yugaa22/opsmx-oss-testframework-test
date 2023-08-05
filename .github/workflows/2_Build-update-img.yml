@@ -58,6 +58,15 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       cloudriver-version: ${{ steps.get-bom.outputs.cloudriver-version }}
+      deck-version: ${{ steps.get-bom.outputs.deck-version }}
+      echo-version: ${{ steps.get-bom.outputs.echo-version }}
+      fiat-version: ${{ steps.get-bom.outputs.fiat-version }}
+      front50-version: ${{ steps.get-bom.outputs.front50-version }}
+      gate-version: ${{ steps.get-bom.outputs.gate-version }}
+      igor-version: ${{ steps.get-bom.outputs.igor-version }}
+      kayenta-version: ${{ steps.get-bom.outputs.kayenta-version }}
+      orca-version: ${{ steps.get-bom.outputs.orca-version }}
+      rosco-version: ${{ steps.get-bom.outputs.rosco-version }}
     if: ${{ true }}
     steps:
     - name: Checkout OpsMx clouddriver repo
@@ -111,8 +120,8 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-clouddriver"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"clouddriver"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true clouddriver-web:installDist -x test
     - name: Login to Quay
@@ -125,7 +134,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile
+        file: Dockerfile.ubuntu
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -157,16 +166,16 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-deck-cve"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"deck"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')-ubuntu"
     - name: Build
       run: |
-           cp docker/ubi8/setupapache2.sh docker/setup-apache2.sh
-           cp docker/ubi8/runapache2.sh docker/run-apache2.sh
+           # cp docker/ubi8/setupapache2.sh docker/setup-apache2.sh
+           # cp docker/ubi8/runapache2.sh docker/run-apache2.sh
   
              # To remove Special characters
-             sed -i 's/\r//' docker/setup-apache2.sh
-             sed -i 's/\r//' docker/run-apache2.sh
+            # sed -i 's/\r//' docker/setup-apache2.sh
+             #sed -i 's/\r//' docker/run-apache2.sh
              
              ./gradlew build --no-daemon -PskipTests 
     - name: Login to Quay
@@ -179,7 +188,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile
+        file: Dockerfile.ubuntu
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -211,8 +220,8 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-oes-echo"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"echo"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true echo-web:installDist -x test
     - name: Login to Quay
@@ -225,9 +234,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        build-args: |
-            CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.1-rc7
-        file: docker/ubi8/Dockerfile
+        file: Dockerfile.ubuntu
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -259,8 +266,8 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-fiat"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"fiat"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true fiat-web:installDist -x test
     - name: Login to Quay
@@ -273,7 +280,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile
+        file: Dockerfile.ubuntu
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -306,8 +313,8 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-front50"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"front50"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true front50-web:installDist -x test
     - name: Login to Quay
@@ -320,7 +327,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile
+        file: Dockerfile.ubuntu
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -352,8 +359,8 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-gate"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"gate"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')-ubuntu"
     - name: Build
       run: |
          ./gradlew --no-daemon -PenableCrossCompilerPlugin=true gate-web:installDist -x test
@@ -371,9 +378,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        build-args: |
-            CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.1-rc7
-        file: docker/ubi8/Dockerfile
+        file: Dockerfile.ubuntu
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -405,8 +410,8 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-igor"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"igor"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
     - name: Login to Quay
@@ -419,7 +424,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile
+        file: Dockerfile.ubuntu
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -452,8 +457,8 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-kayenta"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"kayenta"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true kayenta-web:installDist -x test
     - name: Login to Quay
@@ -466,7 +471,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile
+        file: Dockerfile.ubuntu
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -499,8 +504,8 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-orca"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"orca"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true orca-web:installDist -x test
     - name: Login to Quay
@@ -513,9 +518,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        build-args: |
-            CUSTOMPLUGIN_RELEASEVERSION=v4.0.3.1-rc7
-        file: docker/ubi8/Dockerfile
+        file: Dockerfile.ubuntu
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -548,8 +551,8 @@ jobs:
     - name: Prepare build variables
       id: build_variables
       run: |
-          echo ::set-output name=REPO::"ubi8-rosco"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=REPO::"rosco"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true rosco-web:installDist -x test
     - name: Login to Quay
@@ -562,7 +565,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/ubi8/Dockerfile
+        file: Dockerfile.ubuntu
         push: true
         tags: |
           "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
@@ -570,15 +573,19 @@ jobs:
       run: |
             imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
             echo "rosco=$imageName" >> $GITHUB_OUTPUT  
-
-
+            
+  create-secret:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    if: ${{ true }}
+    steps:
     - name: Create Secret
       env:
-          ACCESS_TOKEN: ${{ inputs.gittoken }}
-          ORG: ${{ inputs.organisation }}
+          ACCESS_TOKEN: ${{ secrets.GIT_TOKEN }}
+          #ORG: ${{ inputs.organisation }}
           #SECRET_NAME: GIT_USERNAME  # Replace with the name you want for the secret
-          GITHUB_USERNAME: ${{inputs.gitusername}}
-          GITHUB_REPO: ${{ inputs.repository }}
+          #GITHUB_USERNAME: ${{inputs.gitusername}}
+          #GITHUB_REPO: ${{ inputs.repository }}
           #LOCAL_FILE_PATH: "ninja-training-cluster.config"
       run: |
 
@@ -587,16 +594,16 @@ jobs:
              GITTOKEN_CONTENT=$(echo $${{inputs.gittoken}} | base64 )
 
               # Fetch the public key for the repository
-              RESPONSE=$(curl -X GET -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${ACCESS_TOKEN}" "https://api.github.com/repos/${ORG}/${GITHUB_REPO}/actions/secrets/public-key")
+              RESPONSE=$(curl -X GET -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${ACCESS_TOKEN}" "https://api.github.com/repos/${{ github.repository }}/actions/secrets/public-key")
               
               # Extract the key_id and key from the response
               KEY_ID=$(echo "$RESPONSE" | jq -r '.key_id')
               #KEY=$(echo "$RESPONSE" | jq -r '.key')
 
-              curl -X PUT "https://api.github.com/repos/${ORG}/${GITHUB_REPO}/actions/secrets/GIT_USERNAME"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITUSERNAME_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
+              curl -X PUT "https://api.github.com/repos/${{ github.repository }}/actions/secrets/GIT_USERNAME"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITUSERNAME_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
 
 
-              curl -X PUT "https://api.github.com/repos/${ORG}/${GITHUB_REPO}/actions/secrets/GIT_TOKEN"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITTOKEN_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
+              curl -X PUT "https://api.github.com/repos/${{ github.repository }}/actions/secrets/GIT_TOKEN_TEST"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITTOKEN_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
 
 
 
@@ -604,7 +611,7 @@ jobs:
 
   outputs:
     runs-on: ubuntu-latest
-    needs: [build-clouddriver,build-deck,build-echo,build-fiat,build-front50,build-gate,build-igor,build-kayenta,build-orca,build-rosco]
+    needs: [build-clouddriver,build-deck,build-echo,build-fiat,build-front50,build-gate,build-igor,build-kayenta,build-orca,build-rosco,create-secret]
     steps:
     - name: Set up Git config
       run: |
@@ -673,8 +680,8 @@ jobs:
           git remote set-url origin https://${{ inputs.gitusername }}:${{ inputs.gittoken }}@github.com/${{ inputs.organisation }}/${{ inputs.repository }}
           
           git push
-      env:
-         GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+      #env:
+       #  GITHUB_TOKEN: ${{ inputs.gittoken }}
     - run: echo "🍏 This job's status is ${{ job.status }}."
     
 
