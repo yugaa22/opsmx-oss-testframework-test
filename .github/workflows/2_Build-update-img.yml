@@ -167,7 +167,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"deck"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.deck-version }})-oss-ubuntu"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.deck-version }}-oss-ubuntu"
     - name: Build
       run: |
            # cp docker/ubi8/setupapache2.sh docker/setup-apache2.sh
