@@ -365,9 +365,9 @@ jobs:
       run: |
          ./gradlew --no-daemon -PenableCrossCompilerPlugin=true gate-web:installDist -x test
 
-         ls -ltra
+         #ls -ltra
 
-         cp docker/custom-plugin.json .
+         #cp docker/custom-plugin.json .
     - name: Login to Quay
       uses: docker/login-action@v1
       with:
