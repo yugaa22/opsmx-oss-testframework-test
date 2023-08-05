@@ -75,27 +75,27 @@ jobs:
       run: |
             wget https://storage.googleapis.com/halconfig/bom/${{ inputs.version }}.yml 
             
-            cloudriver-imageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.clouddriver.version')    
-            deck-imageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.deck.version')
-            echo-imageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.echo.version')
-            fiat-imageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.fiat.version')  
-            front50-imageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.front50.version')
-            gate-imageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.gate.version')
-            igor-imageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.igor.version')
-            kayenta-imageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.kayenta.version')
-            orca-imageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.orca.version')
-            rosco-imageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.rosco.version')
+            CloudriverImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.clouddriver.version')    
+            DeckImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.deck.version')
+            EchoImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.echo.version')
+            FiatImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.fiat.version')  
+            Front50ImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.front50.version')
+            GateImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.gate.version')
+            IgorImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.igor.version')
+            KayentaImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.kayenta.version')
+            OrcaImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.orca.version')
+            RoscoImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.rosco.version')
 
-            echo "cloudriver-version=$cloudriver-imageVersion" >> $GITHUB_OUTPUT
-            echo "deck-version=$deck-imageVersion" >> $GITHUB_OUTPUT
-            echo "echo-version=$echo-imageVersion" >> $GITHUB_OUTPUT
-            echo "fiat-version=$fiat-imageVersion" >> $GITHUB_OUTPUT
-            echo "front50-version=$front50-imageVersion" >> $GITHUB_OUTPUT
-            echo "gate-version=$gate-imageVersion" >> $GITHUB_OUTPUT
-            echo "igor-version=$igor-imageVersion" >> $GITHUB_OUTPUT
-            echo "kayenta-version=$kayenta-imageVersion" >> $GITHUB_OUTPUT
-            echo "orca-version=$orca-imageVersion" >> $GITHUB_OUTPUT
-            echo "rosco-version=$rosco-imageVersion" >> $GITHUB_OUTPUT
+            echo "cloudriver-version=$CloudriverImageVersion" >> $GITHUB_OUTPUT
+            echo "deck-version=$DeckImageVersion" >> $GITHUB_OUTPUT
+            echo "echo-version=$EchoImageVersion" >> $GITHUB_OUTPUT
+            echo "fiat-version=$FiatImageVersion" >> $GITHUB_OUTPUT
+            echo "front50-version=$Front50ImageVersion" >> $GITHUB_OUTPUT
+            echo "gate-version=$GateImageVersion" >> $GITHUB_OUTPUT
+            echo "igor-version=$IgorImageVersion" >> $GITHUB_OUTPUT
+            echo "kayenta-version=$KayentaImageVersion" >> $GITHUB_OUTPUT
+            echo "orca-version=$OrcaImageVersion" >> $GITHUB_OUTPUT
+            echo "rosco-version=$RoscoImageVersion" >> $GITHUB_OUTPUT
             
   build-clouddriver:
     runs-on: ubuntu-latest
