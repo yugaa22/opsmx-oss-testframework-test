@@ -631,24 +631,24 @@ jobs:
            
           #ls -ltra default/service-settings
 
-          yq eval '(.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}")' -i default/service-settings/clouddriver.yml
-          yq eval '(.artifactId |= "${{ needs.build-deck.outputs.deck }}")' -i default/service-settings/deck.yml
-          yq eval '(.artifactId |= "${{ needs.build-echo.outputs.echo }}")' -i default/service-settings/echo.yml
-          yq eval '(.artifactId |= "${{ needs.build-fiat.outputs.fiat }}")' -i default/service-settings/fiat.yml
-          yq eval '(.artifactId |= "${{ needs.build-front50.outputs.front50 }}")' -i default/service-settings/front50.yml
-          yq eval '(.artifactId |= "${{ needs.build-gate.outputs.gate }}")' -i default/service-settings/gate.yml
-          yq eval '(.artifactId |= "${{ needs.build-igor.outputs.igor }}")' -i default/service-settings/igor.yml
-          yq eval '(.artifactId |= "${{ needs.build-kayenta.outputs.kayenta }}")' -i default/service-settings/kayenta.yml
-          yq eval '(.artifactId |= "${{ needs.build-orca.outputs.orca }}")' -i default/service-settings/orca.yml
-          yq eval '(.artifactId |= "${{ needs.build-rosco.outputs.rosco }}")' -i default/service-settings/rosco.yml
+          yq eval '.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i default/service-settings/clouddriver.yml
+          yq eval '.artifactId |= "${{ needs.build-deck.outputs.deck }}"' -i default/service-settings/deck.yml
+          yq eval '.artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i default/service-settings/echo.yml
+          yq eval '.artifactId |= "${{ needs.build-fiat.outputs.fiat }}"' -i default/service-settings/fiat.yml
+          yq eval '.artifactId |= "${{ needs.build-front50.outputs.front50 }}"' -i default/service-settings/front50.yml
+          yq eval '.artifactId |= "${{ needs.build-gate.outputs.gate }}"' -i default/service-settings/gate.yml
+          yq eval '.artifactId |= "${{ needs.build-igor.outputs.igor }}"' -i default/service-settings/igor.yml
+          yq eval '.artifactId |= "${{ needs.build-kayenta.outputs.kayenta }}"' -i default/service-settings/kayenta.yml
+          yq eval '.artifactId |= "${{ needs.build-orca.outputs.orca }}"' -i default/service-settings/orca.yml
+          yq eval '.artifactId |= "${{ needs.build-rosco.outputs.rosco }}"' -i default/service-settings/rosco.yml
 
-          yq eval '(.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}")' -i default/service-settings/clouddriver-caching.yml
-          yq eval '(.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}")' -i default/service-settings/clouddriver-ro.yml
-          yq eval '(.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}")' -i default/service-settings/clouddriver-rw.yml
-          yq eval '(.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}")' -i default/service-settings/clouddriver-ro-deck.yml
+          #yq eval '.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i default/service-settings/clouddriver-caching.yml
+          #yq eval '.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i default/service-settings/clouddriver-ro.yml
+          #yq eval '.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i default/service-settings/clouddriver-rw.yml
+          #yq eval '.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i default/service-settings/clouddriver-ro-deck.yml
 
-            yq eval '(.artifactId |= "${{ needs.build-echo.outputs.echo }}")' -i default/service-settings/echo-worker.yml
-            yq eval '(.artifactId |= "${{ needs.build-echo.outputs.echo }}")' -i default/service-settings/echo-scheduler.yml
+           # yq eval '.artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i default/service-settings/echo-worker.yml
+            #yq eval '.artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i default/service-settings/echo-scheduler.yml
 
           
           #echo artifactId: ${{ needs.build-clouddriver.outputs.clouddriver }} > default/service-settings/clouddriver.yml
