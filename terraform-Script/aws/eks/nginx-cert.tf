@@ -1,6 +1,10 @@
-provider "helm_release" {
+provider "helm" {
   kubernetes {
     config_path = "${local.kubeconfig}"
+  depends_on = [
+    aws_eks_cluster.this
+  ]
+
   }
 }
 
