@@ -55,6 +55,8 @@ jobs:
            terraform apply -auto-approve -input=false
            ls -lta 
            cat kubefile
+
+           cp kubefile /tmp/kubefile
            
            echo "Ns from local file"
 
@@ -73,7 +75,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: kubeconfigfile
-        path: ./kubefile
+        path: /tmp/kubefile
         retention-days: 3
         
 
