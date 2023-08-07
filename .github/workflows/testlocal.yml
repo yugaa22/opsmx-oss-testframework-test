@@ -30,6 +30,7 @@ jobs:
         run: |
 
            export KUBECONFIG=ninja-training-cluster.config
+           kubectl get ns
 
       - name: Install Helm
         run: |
