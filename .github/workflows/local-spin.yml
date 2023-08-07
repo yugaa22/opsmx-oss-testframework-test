@@ -16,7 +16,7 @@ on:
         # Friendly description to be shown in the UI instead of 'name'
         description: 'Helm Release'
         # Default value if no value is explicitly provided
-        default: 'oss-spin'
+        default: 'oss-yuga'
         # Input has to be provided for the workflow to run
         required: false
         # The data type of the input
@@ -34,6 +34,9 @@ jobs:
         run: |
            pwd
             ls -ltra
+
+                       echo "cloneparam='https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git' 
+
             
            export KUBECONFIG=ninja-training-cluster.config
            kubectl get ns
@@ -56,7 +59,9 @@ jobs:
            kubectl create ns ${{ inputs.namespace}} 
 
            #https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git
+
+           echo "cloneparam='https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git' 
             
-           kubectl -n ${{ inputs.namespace}} create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam='https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git' --from-literal=gituser=${{ secrets.GIT_USERNAME }} --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
+           #kubectl -n ${{ inputs.namespace}} create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam='https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git' --from-literal=gituser=${{ secrets.GIT_USERNAME }} --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
           
-           helm -n ${{ inputs.namespace}} upgrade --install  ${{ inputs.releasename}} spinnaker/spinnaker --set halyard.gitops.enabled=true --set spinnakerVersion=1.30.1 --timeout 600s
+           #helm -n ${{ inputs.namespace}} upgrade --install  ${{ inputs.releasename}} spinnaker/spinnaker --set halyard.gitops.enabled=true --set spinnakerVersion=1.30.1 --timeout 600s
