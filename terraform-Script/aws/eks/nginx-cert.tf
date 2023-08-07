@@ -10,7 +10,7 @@ resource "helm_release" "nginx" {
   }
 
   depends_on = [
-    module.eks
+    module.aws_eks_cluster.this
   ]
 }
 
