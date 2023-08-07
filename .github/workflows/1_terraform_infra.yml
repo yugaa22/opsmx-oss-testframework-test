@@ -99,10 +99,14 @@ jobs:
       
     # Generates an execution plan for Terraform
     - name: Terraform Plan
+      working-directory: terraform-Script/aws/nginx-certs
+
       run: terraform plan -input=false 
 
      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
+      working-directory: terraform-Script/aws/nginx-certs
+
       run: terraform apply -auto-approve -input=false
            
   outputs:
