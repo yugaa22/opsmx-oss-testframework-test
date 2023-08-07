@@ -113,15 +113,12 @@ jobs:
 
       run: terraform apply -auto-approve -input=false
            
-  outputs:
-    runs-on: ubuntu-latest
-    needs: [terraform_nginx-certmanager]
-    steps:       
+     
     - name: Upload kubeconfig as artifact
       uses: actions/upload-artifact@v2
       with:
         name: kubeconfigfiles
-        path: /tmp/kubefile
+        path: kubeconfig
         retention-days: 3
         
 
