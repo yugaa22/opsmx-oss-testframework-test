@@ -26,11 +26,11 @@ jobs:
   OpsMx-Spinnaker:
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifacts from previous runs
+      - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
         with:
-          github_token: ${{ secrets.GIT_TOKEN }}
-          workflow: 1_terraform_infra.yml
+          github_token: "${{ secrets.GIT_TOKEN }}"
+          workflow: "1_terraform_infra.yml"
       - name: Display structure of downloaded files
         run: |
            ls -ltra
