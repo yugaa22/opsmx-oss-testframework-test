@@ -50,6 +50,8 @@ jobs:
           
       - name: Setup OpsMx Helm chart and Install
         run: |
+           export KUBECONFIG=ninja-training-cluster.config
+           kubectl get ns
 
            kubectl create ns ${{ inputs.namespace}} 
 
