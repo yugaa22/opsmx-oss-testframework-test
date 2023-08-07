@@ -29,7 +29,7 @@ jobs:
       - name: Download artifacts from previous runs
         uses: dawidd6/action-download-artifact@v2
         with:
-          github_token: ${{secrets.GIT_TOKEN}}
+          github_token: ${{ secrets.GIT_TOKEN }}
           workflow: 1_terraform_infra.yml
       - name: Display structure of downloaded files
         run: |
