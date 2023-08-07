@@ -1,4 +1,4 @@
-provider "helm" {
+provider "helm_release" {
   kubernetes {
     config_path = "${local.kubeconfig}"
   }
