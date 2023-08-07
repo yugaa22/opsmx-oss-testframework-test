@@ -5,7 +5,7 @@ on:
     types:
       - completed
   push:
-    branches: [ "main1" ]
+    branches: [ "main" ]
   pull_request:
 
 permissions:
@@ -75,4 +75,5 @@ jobs:
         name: kubeconfigfile
         path: kubefile
         retention-days: 3
+        
 
