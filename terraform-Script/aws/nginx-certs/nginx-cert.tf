@@ -16,9 +16,9 @@ resource "helm_release" "nginx" {
     value = "true"
   }
 
-  depends_on = [
-    aws_eks_cluster.this
-  ]
+  #depends_on = [
+   # aws_eks_cluster.this
+  #]
 }
 
 resource "helm_release" "cert_manager" {
@@ -32,7 +32,7 @@ resource "helm_release" "cert_manager" {
     value = "true"
   }
 
-  depends_on = [
-    aws_eks_cluster.this
-  ]
+  #depends_on = [
+   # aws_eks_cluster.this
+  #]
 }
