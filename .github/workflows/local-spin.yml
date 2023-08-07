@@ -1,0 +1,60 @@
+name: Setup Spinnaker
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      namespace:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Spinnaker namespace'
+        # Default value if no value is explicitly provided
+        default: 'yugatest'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      releasename:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Helm Release'
+        # Default value if no value is explicitly provided
+        default: 'oss-spin'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+        
+jobs:
+  OpsMx-Spinnaker:
+    runs-on: ubuntu-latest
+    steps:
+     
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Display structure of downloaded files
+        run: |
+           pwd
+            ls -ltra
+            
+           export KUBECONFIG=ninja-training-cluster.config
+           kubectl get ns
+
+      - name: Install Helm
+        run: |
+          curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      - name: Add Helm repository
+        run: |
+          helm repo add stable https://charts.helm.sh/stable 
+          helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/ 
+          helm repo update 
+          
+      - name: Setup OpsMx Helm chart and Install
+        run: |
+
+           kubectl create ns ${{ inputs.namespace}} 
+
+           #https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git
+            
+           kubectl -n ${{ inputs.namespace}} create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam='https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git' --from-literal=gituser=${{ secrets.GIT_USERNAME }} --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
+          
+           helm -n ${{ inputs.namespace}} upgrade --install  ${{ inputs.releasename}} spinnaker/spinnaker --set halyard.gitops.enabled=true --set spinnakerVersion=1.30.1 --timeout 600s
