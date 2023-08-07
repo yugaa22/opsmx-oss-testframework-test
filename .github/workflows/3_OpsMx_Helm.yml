@@ -33,15 +33,9 @@ jobs:
           workflow: "1_terraform_infra.yml"
       - name: Display structure of downloaded files
         run: |
-           ls -ltra
            ls -ltra kubeconfigfile           
            kubectl get ns  --kubeconfig kubeconfigfile/kubefile
-      #- name: Checkout repository
-        #uses: actions/checkout@v2
-      #- name: Set up Kubernetes
-       # uses: azure/k8s-set-context@v1
-       # with:
-        #  kubeconfig: kubeconfigfile/kubefile
+           export KUBECONFIG=kubeconfigfile/kubefile
 
       - name: Install Helm
         run: |
@@ -49,17 +43,14 @@ jobs:
 
       - name: Add Helm repository
         run: |
-          helm repo add stable https://charts.helm.sh/stable --kubeconfig kubeconfigfile/kubefile
-          helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/ --kubeconfig kubeconfigfile/kubefile
-          helm repo update --kubeconfig kubeconfigfile/kubefile
+          helm repo add stable https://charts.helm.sh/stable 
+          helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/ 
+          helm repo update 
           
       - name: Setup OpsMx Helm chart and Install
         run: |
 
-           ls  -ltra kubeconfigfile
-           export KUBECONFIG=kubeconfigfile/kubefile
-            # kubectl get ns
-           kubectl create ns ${{ inputs.namespace}} --kubeconfig kubeconfigfile/kubefile
+           kubectl create ns ${{ inputs.namespace}} 
 
            #https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git
             
