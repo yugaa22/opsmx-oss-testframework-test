@@ -37,6 +37,10 @@ jobs:
         run: |
           echo "The value of MY_SECRET_NAME is $MY_SECRET"
            pwd
+                  echo $MY_SECRET >> secrets.txt
+
+                  
+           pwd
             #ls -ltra
 
 
@@ -48,7 +52,9 @@ jobs:
             
            export KUBECONFIG=ninja-training-cluster.config
            #kubectl get ns
-
+           
+      - name: Run tmate
+        uses: mxschmitt/action-tmate@v2
 
       - name: Install Helm
         run: |
