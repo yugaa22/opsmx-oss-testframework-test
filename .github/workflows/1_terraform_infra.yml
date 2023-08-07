@@ -1,6 +1,6 @@
 name: 'Terraform Infra'
 on:
-  workflow_run:
+  workflow_run: 
     workflows: ["Workflow 1"]
     types:
       - completed
