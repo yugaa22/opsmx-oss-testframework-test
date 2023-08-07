@@ -102,11 +102,10 @@ jobs:
       working-directory: terraform-Script/aws/nginx-certs
 
       run: |
-           #cp /tmp/kubefile kubeconfig
-           ls -ltra /tmp
-            aws s3 cp s3://${AWS_BUCKET}/kubefile s3_kubefile kubeconfig
+           
+            aws s3 cp s3://${AWS_BUCKET}/kubefile kubeconfig
             
-           terraform plan -input=false 
+            terraform plan -input=false 
 
      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
@@ -121,7 +120,7 @@ jobs:
     - name: Upload kubeconfig as artifact
       uses: actions/upload-artifact@v2
       with:
-        name: kubeconfigfile
+        name: kubeconfigfiles
         path: /tmp/kubefile
         retention-days: 3
         
