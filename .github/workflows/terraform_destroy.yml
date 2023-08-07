@@ -1,12 +1,13 @@
 name: 'Terraform Destroy'
-on: 
-  workflow_run:
-    workflows: ["Workflow 1"] 
-    types:
-      - completed
-  push:
-    branches: [ "main" ]
-  pull_request: 
+on:
+  workflow_dispatch:
+    inputs:
+      confim:
+        type: choice
+        description: Do You want to Destroy Terraform Cluster?
+        options:
+        - 'True'
+        - 'False'
 
 permissions:
   contents: read
@@ -16,6 +17,7 @@ env:
 jobs:
   terraform_destroy:
     name: 'Terraform Destroy'
+    if: ${{ github.event.inputs.confim == 'True' }}
     runs-on: ubuntu-latest
     environment: production
 
