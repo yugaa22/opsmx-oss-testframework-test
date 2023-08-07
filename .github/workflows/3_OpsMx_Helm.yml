@@ -35,13 +35,13 @@ jobs:
         run: |
            ls -ltra
            ls -ltra kubeconfigfile           
-           kubectl get ns  --kubeconfig kubeconfig-artifacts/kubefile
+           kubectl get ns  --kubeconfig kubeconfigfile/kubefile
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Set up Kubernetes
         uses: azure/k8s-set-context@v1
         with:
-          kubeconfig: kubeconfig-artifacts/kubefile
+          kubeconfig: kubeconfigfile/kubefile
 
       - name: Install Helm
         run: |
