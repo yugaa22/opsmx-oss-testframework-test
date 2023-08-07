@@ -55,8 +55,11 @@ jobs:
           
       - name: Setup OpsMx Helm chart and Install
         run: |
-          
-           kubectl create ns ${{ inputs.namespace}}
+
+
+           export KUBECONFIG=kubeconfigfile/kubefile
+           kubectl get ns
+           kubectl create ns ${{ inputs.namespace}} --kubeconfig kubeconfigfile/kubefile
 
            #https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git
             
