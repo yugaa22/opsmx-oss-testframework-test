@@ -10,7 +10,7 @@ resource "helm_release" "nginx" {
   }
 
   depends_on = [
-    module.${var.project}-cluster
+    aws_eks_cluster.this
   ]
 }
 
@@ -26,6 +26,6 @@ resource "helm_release" "cert_manager" {
   }
 
   depends_on = [
-    module.eks
+    aws_eks_cluster.this
   ]
 }
