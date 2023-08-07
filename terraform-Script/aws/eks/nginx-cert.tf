@@ -1,6 +1,6 @@
 provider "helm" {
   kubernetes {
-    config_path = "${local.kubefile}"
+    config_path = "local.kubefile"
 
 
   }
