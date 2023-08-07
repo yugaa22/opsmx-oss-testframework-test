@@ -2,7 +2,13 @@ name: 'Terraform Destroy'
 on:
   workflow_dispatch:
     inputs:
-      confim:
+      nginx-cert:
+        type: choice
+        description: Do You want to Destroy Nginx-CertManager in Cluster?
+        options:
+        - 'True'
+        - 'False'
+      cluster:
         type: choice
         description: Do You want to Destroy Terraform Cluster?
         options:
@@ -15,9 +21,9 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 jobs:
-  terraform_destroy:
-    name: 'Terraform Destroy'
-    if: ${{ github.event.inputs.confim == 'True' }}
+  terraform_destroy-nginx-cert:
+    name: 'Terraform Destroy-nginx-cert'
+    if: ${{ github.event.inputs.nginx-cert == 'True' }}
     runs-on: ubuntu-latest
     environment: production
 
@@ -37,14 +43,53 @@ jobs:
 
      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Init
+      working-directory: terraform-Script/aws/nginx-certs
       run: |
            cd terraform-Script/aws/eks
            terraform init
            
      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Destroy
+      working-directory: terraform-Script/aws/nginx-certs
       run: |
            cd terraform-Script/aws/eks
+           terraform destroy -auto-approve -input=false
+
+
+
+  terraform_destroy:
+    name: 'Terraform Destroy'
+    if: ${{ github.event.inputs.cluster == 'True' }}
+    runs-on: ubuntu-latest
+    needs: [terraform_destroy-nginx-cert]
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+     # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Init
+      working-directory: terraform-Script/aws/eks
+      run: |
+           #cd terraform-Script/aws/eks
+           terraform init
+           
+     # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Destroy
+      working-directory: terraform-Script/aws/eks
+      run: |
+           #cd terraform-Script/aws/eks
            terraform destroy -auto-approve -input=false
 
            
