@@ -36,12 +36,12 @@ jobs:
            ls -ltra
            ls -ltra kubeconfigfile           
            kubectl get ns  --kubeconfig kubeconfigfile/kubefile
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Set up Kubernetes
-        uses: azure/k8s-set-context@v1
-        with:
-          kubeconfig: kubeconfigfile/kubefile
+      #- name: Checkout repository
+        #uses: actions/checkout@v2
+      #- name: Set up Kubernetes
+       # uses: azure/k8s-set-context@v1
+       # with:
+        #  kubeconfig: kubeconfigfile/kubefile
 
       - name: Install Helm
         run: |
@@ -49,9 +49,9 @@ jobs:
 
       - name: Add Helm repository
         run: |
-          helm repo add stable https://charts.helm.sh/stable
-          helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/
-          helm repo update
+          helm repo add stable https://charts.helm.sh/stable --kubeconfig kubeconfigfile/kubefile
+          helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/ --kubeconfig kubeconfigfile/kubefile
+          helm repo update --kubeconfig kubeconfigfile/kubefile
           
       - name: Setup OpsMx Helm chart and Install
         run: |
