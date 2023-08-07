@@ -2,7 +2,7 @@ name: 'Terraform Infra'
 on: 
   workflow_run: 
     workflows: ["Workflow 1"]
-    types:
+    types: 
       - completed
   push:
     branches: [ "main" ]
