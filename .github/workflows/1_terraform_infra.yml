@@ -3,8 +3,11 @@ on:
   workflow_dispatch:
     inputs:
       nignx-certmanager:
-        type: boolean
-        description: True or False
+        type: choice
+        description: Do You want to configurare Nginx & Cert-Manager
+        options:
+        - 'True'
+        - 'False'
         
 
 permissions:
