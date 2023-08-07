@@ -1,7 +1,7 @@
 name: 'Terraform Destroy'
 on:
   workflow_run:
-    workflows: ["Workflow 1"]
+    workflows: ["Workflow 1"] 
     types:
       - completed
   push:
