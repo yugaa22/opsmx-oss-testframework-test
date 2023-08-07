@@ -70,7 +70,45 @@ jobs:
            
             echo "Ns from  bucketfile"
            kubectl get ns --kubeconfig=s3_kubefile
+           
 
+  terraform_nginx-certmanager:
+    name: 'Terraform Nginx Certmanager'
+    runs-on: ubuntu-latest
+    needs: [terraform_infra]
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: terraform-Script/aws/nginx-certs
+      run: terraform init
+      
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan -input=false 
+
+     # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -input=false
+           
+  outputs:
+    runs-on: ubuntu-latest
+    needs: [terraform_nginx-certmanager]
+    steps:       
     - name: Upload kubeconfig as artifact
       uses: actions/upload-artifact@v2
       with:
