@@ -31,7 +31,11 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Display structure of downloaded files
+      
+        env:
+          MY_SECRET: ${{ secrets.GIT_TOKEN }}
         run: |
+          echo "The value of MY_SECRET_NAME is $MY_SECRET"
            pwd
             #ls -ltra
 
