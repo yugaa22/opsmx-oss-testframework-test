@@ -1,3 +1,10 @@
+provider "helm" {
+  kubernetes {
+    config_path = "kubeconfig"
+  }
+}
+
+
 resource "helm_release" "nginx" {
   name       = "nginx-ingress"
   repository = "https://kubernetes.github.io/ingress-nginx"
