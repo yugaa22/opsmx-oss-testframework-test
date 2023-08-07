@@ -1,5 +1,5 @@
 name: 'Terraform Infra'
-on:
+on: 
   workflow_run: 
     workflows: ["Workflow 1"]
     types:
