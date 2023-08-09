@@ -9,8 +9,8 @@ locals {
 apiVersion: v1
 clusters:
 - cluster:
-    server: ${aws_eks_cluster.this.endpoint}
     certificate-authority-data: ${aws_eks_cluster.this.certificate_authority.0.data}
+    server: ${aws_eks_cluster.this.endpoint}
   name: kubernetes
 contexts:
 - context:
@@ -23,7 +23,17 @@ preferences: {}
 users:
 - name: aws
   user:
-    token: ${data.aws_eks_cluster_auth.ephemeral.token}
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      args:
+      - --region
+      - ${var.region}
+      - eks
+      - get-token
+      - --cluster-name
+      - ${aws_eks_cluster.this.name}
+      command: aws    
+    
     
 KUBECONFIG
 }
