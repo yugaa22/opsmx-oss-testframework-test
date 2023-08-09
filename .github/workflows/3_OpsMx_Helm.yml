@@ -43,6 +43,8 @@ jobs:
            ls -ltra kubeconfigfile           
            kubectl get ns  --kubeconfig kubeconfigfile/kubefile
            export KUBECONFIG=kubeconfigfile/kubefile
+           echo  "ns from env "
+           kubectl get ns
 
       - name: Install Helm
         run: |
@@ -56,7 +58,7 @@ jobs:
           
       - name: Setup OpsMx Helm chart and Install
         run: |
-
+           export KUBECONFIG=kubeconfigfile/kubefile
            kubectl create ns ${{ inputs.namespace}} 
 
            #https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git
