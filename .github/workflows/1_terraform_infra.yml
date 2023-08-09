@@ -115,7 +115,7 @@ jobs:
 
       run: |
            
-            aws s3 cp s3://${AWS_BUCKET}/kubefile kubeconfig
+            #aws s3 cp s3://${AWS_BUCKET}/kubefile kubeconfig
             
             terraform plan -input=false 
 
@@ -123,7 +123,14 @@ jobs:
     - name: Terraform Apply
       working-directory: terraform-Script/aws/nginx-certs
 
-      run: terraform apply -auto-approve -input=false
+      run: |
+          terraform apply -auto-approve -input=false
+
+          sleep 1m
+
+          kubectl get svc nginx-ingress-ingress-nginx-controller  -n ingress-nginx --no-headers | awk '{print $4}'
+
+          
            
            
            
