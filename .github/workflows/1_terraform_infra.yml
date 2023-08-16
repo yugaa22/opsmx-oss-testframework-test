@@ -127,27 +127,18 @@ jobs:
      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       working-directory: terraform-Script/aws/nginx-certs
-
       run: |
           ls -ltra
-
           cp kubefile kubeconfig
-
-          #export KUBECONFIG=terraform-Script/aws/nginx-certs/kubefile
-          pwd
-          
-
-          #aws s3 cp s3://${AWS_BUCKET}/kubefile kubeconfig
-
-
-          ls -ltra  /tmp/
-          
           terraform apply -auto-approve -input=false
           sleep 2m
-          kubectl get svc nginx-ingress-ingress-nginx-controller  -n ingress-nginx --no-headers | awk '{print $4}'
+    - name: Set Kubernetes Context
+      uses: azure/k8s-set-context@v1
+      with:
+        method: kubeconfig
+        kubeconfig: kubefile  
+    - name: Get Service IP
+      run: |
+            kubectl --kubeconfig kubeconfig get svc nginx-ingress-ingress-nginx-controller  -n ingress-nginx --no-headers | awk '{print $4}' 
 
-          
-           
-           
-           
-
+       
