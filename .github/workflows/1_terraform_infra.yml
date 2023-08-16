@@ -136,9 +136,11 @@ jobs:
       uses: azure/k8s-set-context@v1
       with:
         method: kubeconfig
-        kubeconfig: kubefile  
+        kubeconfig: terraform-Script/aws/nginx-certs/kubefile  
     - name: Get Service IP
       run: |
-            kubectl --kubeconfig kubeconfig get svc nginx-ingress-ingress-nginx-controller  -n ingress-nginx --no-headers | awk '{print $4}' 
+         pwd
+          ls -ltra
+          kubectl --kubeconfig terraform-Script/aws/nginx-certs/kubefile get svc nginx-ingress-ingress-nginx-controller  -n ingress-nginx --no-headers | awk '{print $4}' 
 
        
