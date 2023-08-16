@@ -122,7 +122,8 @@ jobs:
       working-directory: terraform-Script/aws/nginx-certs
       run: |
           export KUBECONFIG=terraform-Script/aws/eks/kubefile
-          ls -ltra terraform-Script/aws/eks
+          pwd
+          ls -ltra /home/runner/work/opsmx-oss-testframework/opsmx-oss-testframework/terraform-Script/aws/eks
 
           aws s3 cp s3://${AWS_BUCKET}/kubefile kubeconfig
 
