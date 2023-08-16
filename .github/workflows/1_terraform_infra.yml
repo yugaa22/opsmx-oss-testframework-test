@@ -40,21 +40,19 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: |
-           cd terraform-Script/aws/eks
-           terraform init
+      working-directory: terraform-Script/aws/eks
+      run: terraform init
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: |
-            cd terraform-Script/aws/eks
-            terraform plan -input=false 
+      working-directory: terraform-Script/aws/eks
+      run: terraform plan -input=false 
 
      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply
+    - name: Terraform Apply      
+      working-directory: terraform-Script/aws/eks
       run: |
-           cd terraform-Script/aws/eks
-           terraform apply -auto-approve -input=false
+         terraform apply -auto-approve -input=false
            ls -lta 
            pwd
            cat kubefile
@@ -107,27 +105,25 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       working-directory: terraform-Script/aws/nginx-certs
-      run: terraform init
+      run: |
+           export KUBECONFIG=terraform-Script/aws/eks/kubefile
+           terraform init
       
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       working-directory: terraform-Script/aws/nginx-certs
-
       run: |
-           
-            #aws s3 cp s3://${AWS_BUCKET}/kubefile kubeconfig
-            
+          export KUBECONFIG=terraform-Script/aws/eks/kubefile
+           #aws s3 cp s3://${AWS_BUCKET}/kubefile kubeconfig
             terraform plan -input=false 
 
      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       working-directory: terraform-Script/aws/nginx-certs
-
       run: |
+          export KUBECONFIG=terraform-Script/aws/eks/kubefile
           terraform apply -auto-approve -input=false
-
           sleep 1m
-
           kubectl get svc nginx-ingress-ingress-nginx-controller  -n ingress-nginx --no-headers | awk '{print $4}'
 
           
