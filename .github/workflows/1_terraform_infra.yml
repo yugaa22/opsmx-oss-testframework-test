@@ -106,14 +106,14 @@ jobs:
     - name: Terraform Init
       working-directory: terraform-Script/aws/nginx-certs
       run: |
-           export KUBECONFIG=terraform-Script/aws/eks/kubefile
+           #export KUBECONFIG=terraform-Script/aws/eks/kubefile
            terraform init
       
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       working-directory: terraform-Script/aws/nginx-certs
       run: |
-          export KUBECONFIG=terraform-Script/aws/eks/kubefile
+          #export KUBECONFIG=terraform-Script/aws/eks/kubefile
            #aws s3 cp s3://${AWS_BUCKET}/kubefile kubeconfig
             terraform plan -input=false 
 
@@ -122,6 +122,13 @@ jobs:
       working-directory: terraform-Script/aws/nginx-certs
       run: |
           export KUBECONFIG=terraform-Script/aws/eks/kubefile
+          ls -ltra terraform-Script/aws/eks
+
+          aws s3 cp s3://${AWS_BUCKET}/kubefile kubeconfig
+
+          pwd
+
+          ls -ltra 
           terraform apply -auto-approve -input=false
           sleep 1m
           kubectl get svc nginx-ingress-ingress-nginx-controller  -n ingress-nginx --no-headers | awk '{print $4}'
