@@ -63,7 +63,8 @@ jobs:
 
            #https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git
             
-           kubectl -n ${{ inputs.namespace}} create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam='https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git' --from-literal=gituser=${{ secrets.GIT_USERNAME }} --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
-          
+           #kubectl -n ${{ inputs.namespace}} create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam='https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git' --from-literal=gituser=${{ secrets.GIT_USERNAME }} --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
+           kubectl -n ${{ inputs.namespace}} create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam="https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git" --from-literal=gituser=${{ secrets.GIT_USERNAME }} --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
+
            helm -n ${{ inputs.namespace}} upgrade --install  ${{ inputs.releasename}} spinnaker/spinnaker --set halyard.gitops.enabled=true --set spinnakerVersion=${{ secrets.version }} --timeout 600s
 
