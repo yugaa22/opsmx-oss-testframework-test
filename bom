@@ -1,21 +1,24 @@
-services:
-  "clouddriver":
-    img: ""
-  "deck":
-    img: "quay.io/opsmxpublic/ubi8-deck-cve:29155a21e-202305301427"
-  "echo":
-    img: ""
-  "fiat":
-    img: ""
-  "front50":
-    img: ""
-  "gate":
-    img: "quay.io/opsmxpublic/ubi8-gate-cve:8516e030-202305301422-dev"
-  "igor":
-    img: ""
-  "kayenta":
-    img: ""
-  "orca":
-    img: ""
-  "rosco":
-    img: ""
+artifactSources:
+  services:
+    clouddriver:
+      image: 5.78.4
+    deck:
+      image: 3.12.2
+    echo:
+      image: 2.36.2
+    fiat:
+      image: 1.36.2
+    front50:
+      image: 2.27.2
+    gate:
+      image: 6.57.2
+    igor:
+      image: 4.10.2
+    kayenta:
+      image: 2.35.2
+    orca:
+      image: 8.27.2
+    rosco:
+      image: 1.12.3
+  timestamp: 'date'
+  version: master
