@@ -488,6 +488,9 @@ jobs:
       run: | 
           ls  -ltra
 
+          git config --global user.email "yugaa22@gmail.com"
+          git config --global user.name "yugaa22"
+
           yq eval '.artifactSources.services.clouddriver |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i bom
           yq eval '.artifactSources.services.deck |= "${{ needs.build-deck.outputs.deck }}"' -i bom
           yq eval '.artifactSources.services.echo |= "${{ needs.build-echo.outputs.echo }}"' -i bom
