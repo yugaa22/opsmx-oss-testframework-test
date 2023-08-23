@@ -480,7 +480,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-clouddriver,build-deck,build-echo,build-fiat,build-front50,build-gate,build-igor,build-kayenta,build-orca,build-rosco]
     steps:
-  
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: create artifact     
       #working-directory: ./target-repo
       run: | 
