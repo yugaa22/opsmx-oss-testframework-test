@@ -1,24 +1,14 @@
 artifactSources:
   services:
-    clouddriver:
-      image: 5.78.4
-    deck:
-      image: 3.12.2
-    echo:
-      image: 2.36.2
-    fiat:
-      image: 1.36.2
-    front50:
-      image: 2.27.2
-    gate:
-      image: 6.57.2
-    igor:
-      image: 4.10.2
-    kayenta:
-      image: 2.35.2
-    orca:
-      image: 8.27.2
-    rosco:
-      image: 1.12.3
+    clouddriver: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+    deck: quay.io/opsmxpublic/deck:db06e88--v-oss-ubuntu
+    echo: quay.io/opsmxpublic/echo:d1ce743--v-oss-ubuntu
+    fiat: quay.io/opsmxpublic/fiat:75e3660--v-oss-ubuntu
+    front50: quay.io/opsmxpublic/front50:32294dd--v-oss-ubuntu
+    gate: quay.io/opsmxpublic/gate:f57df15--v-oss-ubuntu
+    igor: quay.io/opsmxpublic/igor:60361e2--v-oss-ubuntu
+    kayenta: quay.io/opsmxpublic/kayenta:302d18d--v-oss-ubuntu
+    orca: quay.io/opsmxpublic/orca:fea893e--v-oss-ubuntu
+    rosco: quay.io/opsmxpublic/rosco:686a329--v-oss-ubuntu
   timestamp: 'date'
   version: master
