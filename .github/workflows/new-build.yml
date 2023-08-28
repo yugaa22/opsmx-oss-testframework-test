@@ -520,7 +520,7 @@ jobs:
       run: |
             imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
             repo=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}
-            halyardtag:${{ steps.build_variables.outputs.VERSION }}
+            halyardtag=${{ steps.build_variables.outputs.VERSION }}
             echo "repo=$repo" >> $GITHUB_OUTPUT
             echo "halyardtag=$halyardtag" >> $GITHUB_OUTPUT
             echo "halyard=$imageName" >> $GITHUB_OUTPUT
