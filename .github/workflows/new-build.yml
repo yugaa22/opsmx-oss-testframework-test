@@ -501,7 +501,15 @@ jobs:
           yq eval ''.halyard.additionalServiceSettings."kayenta.yml".artifactId |= "${{ needs.build-kayenta.outputs.kayenta }}"' -i bom
           yq eval ''.halyard.additionalServiceSettings."orca.yml".artifactId |= "${{ needs.build-orca.outputs.orca }}"' -i bom
           yq eval ''.halyard.additionalServiceSettings."rosco.yml".artifactId |= "${{ needs.build-rosco.outputs.rosco }}"' -i bom
-        
+
+          yq eval ''.halyard.additionalServiceSettings."clouddriver-caching.yml".artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."clouddriver-ro.yml".artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."clouddriver-rw.yml".artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."clouddriver-ro-deck.yml".artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i bom
+
+          yq eval ''.halyard.additionalServiceSettings."echo-scheduler.yml".artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."echo-worker.yml".artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i bom
+
            echo  $date
            
           git add bom          
