@@ -30,7 +30,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"clouddriver"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.cloudriver-version }}-oss-ubuntu"
+          echo ::set-output name=VERSION::"nightly-master-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true clouddriver-web:installDist -x test
     - name: Login to Quay
@@ -75,7 +75,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"deck"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.deck-version }}-oss-ubuntu"
+          echo ::set-output name=VERSION::"nightly-master-oss-ubuntu"
     - name: Build
       run: |
            # cp docker/ubi8/setupapache2.sh docker/setup-apache2.sh
@@ -128,7 +128,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"echo"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.echo-version }}-oss-ubuntu"
+          echo ::set-output name=VERSION::"nightly-master-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true echo-web:installDist -x test
     - name: Login to Quay
@@ -173,7 +173,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"fiat"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.fiat-version }}-oss-ubuntu"
+          echo ::set-output name=VERSION::"nightly-master-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true fiat-web:installDist -x test
     - name: Login to Quay
@@ -219,7 +219,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"front50"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.front50-version }}-oss-ubuntu"
+          echo ::set-output name=VERSION::"nightly-master-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true front50-web:installDist -x test
     - name: Login to Quay
@@ -264,7 +264,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"gate"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.gate-version }}-oss-ubuntu"
+          echo ::set-output name=VERSION::"nightly-master-oss-ubuntu"
     - name: Build
       run: |
          ./gradlew --no-daemon -PenableCrossCompilerPlugin=true gate-web:installDist -x test
@@ -314,7 +314,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"igor"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.igor-version }}-oss-ubuntu"
+          echo ::set-output name=VERSION::"nightly-master-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
     - name: Login to Quay
@@ -360,7 +360,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"kayenta"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.kayenta-version }}-oss-ubuntu"
+          echo ::set-output name=VERSION::"nightly-master-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true kayenta-web:installDist -x test
     - name: Login to Quay
@@ -406,7 +406,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"orca"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.orca-version }}-oss-ubuntu"
+          echo ::set-output name=VERSION::"nightly-master-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true orca-web:installDist -x test
     - name: Login to Quay
@@ -452,7 +452,7 @@ jobs:
       id: build_variables
       run: |
           echo ::set-output name=REPO::"rosco"
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.rosco-version }}-oss-ubuntu"
+          echo ::set-output name=VERSION::"nightly-master-oss-ubuntu"
     - name: Build
       run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true rosco-web:installDist -x test
     - name: Login to Quay
@@ -491,16 +491,16 @@ jobs:
           git config --global user.email "yugaa22@gmail.com"
           git config --global user.name "yugaa22"
 
-          yq eval '.artifactSources.services.clouddriver |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i bom
-          yq eval '.artifactSources.services.deck |= "${{ needs.build-deck.outputs.deck }}"' -i bom
-          yq eval '.artifactSources.services.echo |= "${{ needs.build-echo.outputs.echo }}"' -i bom
-          yq eval '.artifactSources.services.fiat |= "${{ needs.build-fiat.outputs.fiat }}"' -i bom
-          yq eval '.artifactSources.services.front50 |= "${{ needs.build-front50.outputs.front50 }}"' -i bom
-          yq eval '.artifactSources.services.gate |= "${{ needs.build-gate.outputs.gate }}"' -i bom
-          yq eval '.artifactSources.services.igor |= "${{ needs.build-igor.outputs.igor }}"' -i bom
-          yq eval '.artifactSources.services.kayenta |= "${{ needs.build-kayenta.outputs.kayenta }}"' -i bom
-          yq eval '.artifactSources.services.orca |= "${{ needs.build-orca.outputs.orca }}"' -i bom
-          yq eval '.artifactSources.services.rosco |= "${{ needs.build-rosco.outputs.rosco }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."clouddriver.yml".artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."deck.yml".artifactId |= "${{ needs.build-deck.outputs.deck }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."echo.yml".artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."fiat.yml".artifactId |= "${{ needs.build-fiat.outputs.fiat }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."front50.yml".artifactId |= "${{ needs.build-front50.outputs.front50 }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."gate.yml".artifactId |= "${{ needs.build-gate.outputs.gate }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."igor.yml".artifactId |= "${{ needs.build-igor.outputs.igor }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."kayenta.yml".artifactId |= "${{ needs.build-kayenta.outputs.kayenta }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."orca.yml".artifactId |= "${{ needs.build-orca.outputs.orca }}"' -i bom
+          yq eval ''.halyard.additionalServiceSettings."rosco.yml".artifactId |= "${{ needs.build-rosco.outputs.rosco }}"' -i bom
         
            echo  $date
            
