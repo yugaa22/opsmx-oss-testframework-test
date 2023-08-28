@@ -1,14 +1,67 @@
-artifactSources:
-  services:
-    clouddriver: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
-    deck: quay.io/opsmxpublic/deck:db06e88--v-oss-ubuntu
-    echo: quay.io/opsmxpublic/echo:d1ce743--v-oss-ubuntu
-    fiat: quay.io/opsmxpublic/fiat:75e3660--v-oss-ubuntu
-    front50: quay.io/opsmxpublic/front50:32294dd--v-oss-ubuntu
-    gate: quay.io/opsmxpublic/gate:f57df15--v-oss-ubuntu
-    igor: quay.io/opsmxpublic/igor:60361e2--v-oss-ubuntu
-    kayenta: quay.io/opsmxpublic/kayenta:302d18d--v-oss-ubuntu
-    orca: quay.io/opsmxpublic/orca:fea893e--v-oss-ubuntu
-    rosco: quay.io/opsmxpublic/rosco:686a329--v-oss-ubuntu
-  timestamp: 'date'
-  version: master
+halyard:
+  gitops:
+    enabled: false
+  spinnakerVersion: 1.30.1
+  image:
+    repository: us-docker.pkg.dev/spinnaker-community/docker/halyard
+    tag: 1.45.0
+  additionalServiceSettings:
+    gate.yml:
+      healthEndpoint: /health
+      kubernetes:
+        useExecHealthCheck: false
+      artifactId: quay.io/opsmxpublic/gate:f57df15--v-oss-ubuntu
+    deck.yml:
+      artifactId: quay.io/opsmxpublic/deck:db06e88--v-oss-ubuntu
+    clouddriver-caching.yml:
+      artifactId: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+    clouddriver.yml:
+      artifactId: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+    clouddriver-rw.yml:
+      artifactId: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+    clouddriver-ro.yml:
+      artifactId: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+    clouddriver-ro-deck.yml:
+      artifactId: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+    echo.yml:
+      artifactId: quay.io/opsmxpublic/echo:d1ce743--v-oss-ubuntu
+    echo-scheduler.yml:
+      artifactId: quay.io/opsmxpublic/echo:d1ce743--v-oss-ubuntu
+    echo-worker.yml:
+      artifactId: quay.io/opsmxpublic/echo:d1ce743--v-oss-ubuntu
+    fiat.yml:
+      artifactId: quay.io/opsmxpublic/fiat:75e3660--v-oss-ubuntu
+    front50.yml:
+      artifactId: quay.io/opsmxpublic/front50:32294dd--v-oss-ubuntu
+    igor.yml:
+      artifactId: quay.io/opsmxpublic/igor:60361e2--v-oss-ubuntu
+    kayenta.yml:
+      artifactId: quay.io/opsmxpublic/kayenta:302d18d--v-oss-ubuntu
+    orca.yml:
+      artifactId: quay.io/opsmxpublic/orca:fea893e--v-oss-ubuntu
+    rosco.yml:
+      artifactId: quay.io/opsmxpublic/rosco:686a329--v-oss-ubuntu
+
+ingress:
+  enabled: true
+  host: spinnaker-helm.ninja-test.opsmx.net
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: 'true'
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  tls:
+    - secretName: spinnaker-tls
+      hosts:
+        - spinnaker-helm.ninja-test.opsmx.net
+
+ingressGate:
+  enabled: true
+  host: gate-helm.ninja-test.opsmx.net
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: 'true'
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  tls:
+    - secretName: gate-tls
+      hosts:
+        - gate-helm.ninja-test.opsmx.net
