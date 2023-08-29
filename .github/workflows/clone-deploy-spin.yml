@@ -1,4 +1,4 @@
-name: Setup Spinnaker
+name: Deploy Spinnaker with clone
 on:
   workflow_dispatch:
     # Inputs the workflow accepts.
