@@ -1,4 +1,4 @@
-name: Deploy Spinnaker with clone
+name: Deploy override config
 on:
   workflow_dispatch:
     # Inputs the workflow accepts.
