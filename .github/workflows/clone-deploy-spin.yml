@@ -22,8 +22,6 @@ on:
         # The data type of the input
         type: string
 
-env:
-  KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         
 jobs:
   OpsMx-Spinnaker:
@@ -31,14 +29,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
       - name: Set up Kubernetes
-        env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
         run: |
-          echo $KUBECONFIG  > kubeconfig
-          mkdir -p ~/.kube
-          mv kubeconfig ~/.kube/config
+
 
 
           kubectl get ns
