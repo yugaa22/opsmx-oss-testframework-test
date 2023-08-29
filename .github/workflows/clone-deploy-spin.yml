@@ -46,12 +46,9 @@ jobs:
       - name: Setup OpsMx Helm chart and Install
         run: |
             git clone https://github.com/OpsMx/spinnaker-helm.git
-
-
+            cd spinnaker-helm/
             ls -ltra
-            
-
-            helm template ${{ inputs.releasename}} spinnaker-helm/charts/spinnaker/ --timeout=900s -n  -n ${{ inputs.namespace}} 
+            helm template ${{ inputs.releasename}} charts/spinnaker/ --timeout=900s -n  -n ${{ inputs.namespace}} 
              
             #kubectl create ns ${{ inputs.namespace}} 
 
