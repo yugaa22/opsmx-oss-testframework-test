@@ -1,7 +1,7 @@
 halyard:
   gitops:
     enabled: false
-  spinnakerVersion: 1.30.1
+  spinnakerVersion: master-latest-unvalidated
   image:
     repository: quay.io/opsmxpublic/halyard
     tag: 1.45.0
@@ -42,24 +42,30 @@ halyard:
     rosco.yml:
       artifactId: quay.io/opsmxpublic/rosco:nightly-master-oss-ubuntu
 ingress:
-  enabled: true
-  host: spinnaker-helm.ninja-test.opsmx.net
+  enabled: false
+  host: deck.opsmx.net
   annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-oss-spin
     ingress.kubernetes.io/ssl-redirect: 'true'
     kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
   tls:
-    - secretName: spinnaker-tls
+    - secretName: deck-tls
       hosts:
-        - spinnaker-helm.ninja-test.opsmx.net
+        - deck.opsmx.net
 ingressGate:
-  enabled: true
-  host: gate-helm.ninja-test.opsmx.net
+  enabled: false
+  host: gate.opsmx.net
   annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-oss-spin
     ingress.kubernetes.io/ssl-redirect: 'true'
     kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
   tls:
     - secretName: gate-tls
       hosts:
-        - gate-helm.ninja-test.opsmx.net
+        - gate.opsmx.net
