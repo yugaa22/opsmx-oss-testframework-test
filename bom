@@ -3,45 +3,44 @@ halyard:
     enabled: false
   spinnakerVersion: 1.30.1
   image:
-    repository: us-docker.pkg.dev/spinnaker-community/docker/halyard
-    tag: 1.45.0
+    repository: quay.io/opsmxpublic/halyard
+    tag: nightly-master-oss-ubuntu
   additionalServiceSettings:
     gate.yml:
       healthEndpoint: /health
       kubernetes:
         useExecHealthCheck: false
-      artifactId: quay.io/opsmxpublic/gate:f57df15--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/gate:nightly-master-oss-ubuntu
     deck.yml:
-      artifactId: quay.io/opsmxpublic/deck:db06e88--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/deck:nightly-master-oss-ubuntu
     clouddriver-caching.yml:
-      artifactId: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/clouddriver:nightly-master-oss-ubuntu
     clouddriver.yml:
-      artifactId: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/clouddriver:nightly-master-oss-ubuntu
     clouddriver-rw.yml:
-      artifactId: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/clouddriver:nightly-master-oss-ubuntu
     clouddriver-ro.yml:
-      artifactId: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/clouddriver:nightly-master-oss-ubuntu
     clouddriver-ro-deck.yml:
-      artifactId: quay.io/opsmxpublic/clouddriver:922d6b8--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/clouddriver:nightly-master-oss-ubuntu
     echo.yml:
-      artifactId: quay.io/opsmxpublic/echo:d1ce743--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/echo:nightly-master-oss-ubuntu
     echo-scheduler.yml:
-      artifactId: quay.io/opsmxpublic/echo:d1ce743--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/echo:nightly-master-oss-ubuntu
     echo-worker.yml:
-      artifactId: quay.io/opsmxpublic/echo:d1ce743--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/echo:nightly-master-oss-ubuntu
     fiat.yml:
-      artifactId: quay.io/opsmxpublic/fiat:75e3660--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/fiat:nightly-master-oss-ubuntu
     front50.yml:
-      artifactId: quay.io/opsmxpublic/front50:32294dd--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/front50:nightly-master-oss-ubuntu
     igor.yml:
-      artifactId: quay.io/opsmxpublic/igor:60361e2--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/igor:nightly-master-oss-ubuntu
     kayenta.yml:
-      artifactId: quay.io/opsmxpublic/kayenta:302d18d--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/kayenta:nightly-master-oss-ubuntu
     orca.yml:
-      artifactId: quay.io/opsmxpublic/orca:fea893e--v-oss-ubuntu
+      artifactId: quay.io/opsmxpublic/orca:nightly-master-oss-ubuntu
     rosco.yml:
-      artifactId: quay.io/opsmxpublic/rosco:686a329--v-oss-ubuntu
-
+      artifactId: quay.io/opsmxpublic/rosco:nightly-master-oss-ubuntu
 ingress:
   enabled: true
   host: spinnaker-helm.ninja-test.opsmx.net
@@ -53,7 +52,6 @@ ingress:
     - secretName: spinnaker-tls
       hosts:
         - spinnaker-helm.ninja-test.opsmx.net
-
 ingressGate:
   enabled: true
   host: gate-helm.ninja-test.opsmx.net
