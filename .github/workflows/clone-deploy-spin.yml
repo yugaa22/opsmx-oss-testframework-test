@@ -48,6 +48,6 @@ jobs:
             git clone https://github.com/OpsMx/spinnaker-helm.git
             
 
-            helm template ${{ inputs.releasename}} spinnaker-helm/charts/spinnaker/ -f bom --timeout=900s  -n ${{ inputs.namespace}} 
+            helm template ${{ inputs.releasename}} spinnaker-helm/charts/spinnaker/ -f bom   -n ${{ inputs.namespace}} 
              
   
