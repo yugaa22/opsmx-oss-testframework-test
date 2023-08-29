@@ -22,7 +22,6 @@ on:
         # The data type of the input
         type: string
 
-
 env:
   KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         
@@ -32,7 +31,7 @@ jobs:
     steps:
       - name: Display structure of downloaded files
         run: |         
-           kubectl get ns 
+           kubectl get ns  --kubeconfig=${{ secrets.KUBECONFIG }}
 
       - name: Install Helm
         run: |
