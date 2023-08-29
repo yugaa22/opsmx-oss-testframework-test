@@ -1,5 +1,6 @@
 name: 'Terraform Infra'
 on:
+  workflow_call: 
   workflow_dispatch:
     inputs:
       nignx-certmanager:
