@@ -50,7 +50,8 @@ jobs:
       run: terraform plan -input=false 
 
      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply      
+    - name: Terraform Apply  
+      id: kubeconfigfile # to get output
       working-directory: terraform-Script/aws/eks
       run: |
          terraform apply -auto-approve -input=false
@@ -72,6 +73,9 @@ jobs:
            
             echo "Ns from  bucketfile"
            kubectl get ns --kubeconfig=s3_kubefile
+
+          echo "kubefile=$(cat kubefile)" >> $GITHUB_OUTPUT  # to get output
+
            
     - name: Upload kubeconfig as artifact
       uses: actions/upload-artifact@v2
