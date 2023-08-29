@@ -1,0 +1,66 @@
+name: Deploy Spinnaker with clone
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:    
+      cluster_create:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Create cluster using Terraform'
+        type: choice
+        options:
+        - 'True'
+        - 'False'
+      namespace:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Spinnaker namespace'
+        # Default value if no value is explicitly provided
+        default: 'spinnaker'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      releasename:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Helm Release'
+        # Default value if no value is explicitly provided
+        default: 'oss-spin'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+
+        
+jobs:
+
+  OpsMx-terraform:
+    if: ${{ github.event.inputs.cluster_create == 'True' }}
+    uses: yugaa22/opsmx-oss-testframework-test/.github/workflows/1_terraform_infra.yml@main
+
+  OpsMx-Spinnaker:
+    if: ${{ github.event.inputs.cluster_create == 'Tdrue' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+      - name: Install Helm
+        run: |
+          curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      - name: Add Helm repository
+        run: |
+          helm repo add stable https://charts.helm.sh/stable 
+          helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/ 
+          helm repo update 
+          
+      - name: Setup OpsMx Helm chart and Install
+        run: |
+            git clone https://github.com/OpsMx/spinnaker-helm.git
+            helm template ${{ inputs.releasename}} spinnaker-helm/charts/spinnaker/ -f bom   -n ${{ inputs.namespace}} 
+            #helm upgrade --install ${{ inputs.releasename}} spinnaker-helm/charts/spinnaker/ -f bom  --timeout=900s -n ${{ inputs.namespace}} 
+            rm -rf spinnaker-helm
+
+  
