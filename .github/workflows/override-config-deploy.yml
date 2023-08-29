@@ -38,7 +38,8 @@ jobs:
 
   OpsMx-terraform:
     if: ${{ github.event.inputs.cluster_create == 'True' }}
-    uses: yugaa22/opsmx-oss-testframework-test/.github/workflows/1_terraform_infra.yml@main
+    uses: ./.github/workflows/1_terraform_infra.yml
+        #yugaa22/opsmx-oss-testframework-test/.github/workflows/1_terraform_infra.yml@main
 
   Get-details:
     if: ${{ github.event.inputs.cluster_create == 'True' }}
