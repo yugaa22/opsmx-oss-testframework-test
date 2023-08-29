@@ -1,0 +1,146 @@
+name: 'Terraform Infra'
+on:
+  workflow_dispatch:
+    inputs:
+      nignx-certmanager:
+        type: choice
+        description: Do You want to configurare Nginx & Cert-Manager
+        options:
+        - 'True'
+        - 'False'
+        
+
+permissions:
+  contents: read
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  
+jobs:
+  terraform_infra:
+    name: 'Terraform Infra'
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: terraform-Script/aws/eks
+      run: terraform init
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      working-directory: terraform-Script/aws/eks
+      run: terraform plan -input=false 
+
+     # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply      
+      working-directory: terraform-Script/aws/eks
+      run: |
+         terraform apply -auto-approve -input=false
+           ls -lta 
+           pwd
+           cat kubefile
+
+           cp kubefile /tmp/kubefile
+           
+           echo "Ns from local file"
+
+           kubectl get ns --kubeconfig=kubefile
+          
+           echo "copying into s3  bucket"
+           aws s3 cp kubefile s3://${AWS_BUCKET}/kubefile
+    
+            echo "copying from s3  bucket"
+           aws s3 cp s3://${AWS_BUCKET}/kubefile s3_kubefile 
+           
+            echo "Ns from  bucketfile"
+           kubectl get ns --kubeconfig=s3_kubefile
+           
+    - name: Upload kubeconfig as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: kubeconfigfile
+        path: terraform-Script/aws/eks/kubefile
+        retention-days: 3
+
+           
+
+  terraform_nginx-certmanager:
+    name: 'Terraform Nginx Certmanager'
+    if: ${{ github.event.inputs.nignx-certmanager == 'True' }}
+    runs-on: ubuntu-latest
+    needs: [terraform_infra]
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      
+    - name: Download kubeconfig as artifact
+      uses: actions/download-artifact@master
+      with:
+       name: kubeconfigfile
+       path: terraform-Script/aws/nginx-certs
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: terraform-Script/aws/nginx-certs
+      run: |
+           #export KUBECONFIG=terraform-Script/aws/eks/kubefile
+           ls -ltra
+           terraform init
+      
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      working-directory: terraform-Script/aws/nginx-certs
+      run: |
+          #export KUBECONFIG=terraform-Script/aws/eks/kubefile
+           #aws s3 cp s3://${AWS_BUCKET}/kubefile kubeconfig
+            terraform plan -input=false 
+
+     # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      working-directory: terraform-Script/aws/nginx-certs
+      run: |
+          ls -ltra
+          cp kubefile kubeconfig
+          terraform apply -auto-approve -input=false
+          sleep 2m
+    - name: Set Kubernetes Context
+      uses: azure/k8s-set-context@v1
+      with:
+        method: kubeconfig
+        kubeconfig: terraform-Script/aws/nginx-certs/kubefile  
+    - name: Get Service IP
+      run: |
+         pwd
+          ls -ltra
+          kubectl --kubeconfig terraform-Script/aws/nginx-certs/kubefile get svc nginx-ingress-ingress-nginx-controller  -n ingress-nginx --no-headers | awk '{print $4}' 
+
+       

@@ -1,0 +1,70 @@
+name: Setup Spinnaker
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      namespace:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Spinnaker namespace'
+        # Default value if no value is explicitly provided
+        default: 'spinnaker'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      releasename:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Helm Release'
+        # Default value if no value is explicitly provided
+        default: 'oss-spin'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+        
+jobs:
+  OpsMx-Spinnaker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: "${{ secrets.GIT_TOKEN }}"
+          workflow: "1_terraform_infra.yml"
+      - name: Display structure of downloaded files
+        run: |
+           ls -ltra kubeconfigfile           
+           kubectl get ns  --kubeconfig kubeconfigfile/kubefile
+           export KUBECONFIG=kubeconfigfile/kubefile
+           echo  "ns from env "
+           kubectl get ns
+
+      - name: Install Helm
+        run: |
+          curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      - name: Add Helm repository
+        run: |
+          helm repo add stable https://charts.helm.sh/stable 
+          helm repo add spinnaker https://opsmx.github.io/spinnaker-helm/ 
+          helm repo update 
+          
+      - name: Setup OpsMx Helm chart and Install
+        run: |
+           export KUBECONFIG=kubeconfigfile/kubefile
+           kubectl create ns ${{ inputs.namespace}} 
+
+           #https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git
+            
+           #kubectl -n ${{ inputs.namespace}} create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam='https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN_TEST }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git' --from-literal=gituser=${{ secrets.GIT_USERNAME }} --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
+           kubectl -n ${{ inputs.namespace}} create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam="https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git" --from-literal=gituser="${{ secrets.GIT_USERNAME }}" --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
+
+           helm -n ${{ inputs.namespace}} upgrade --install  ${{ inputs.releasename}} spinnaker/spinnaker --set halyard.gitops.enabled=true --set spinnakerVersion=${{ secrets.version }} --timeout 600s
+

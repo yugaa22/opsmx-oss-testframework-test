@@ -1,0 +1,695 @@
+name: Build OSS spinnaker
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      version:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Spinnaker Version'
+        # Default value if no value is explicitly provided
+        default: '1.30.1'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      organisation:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Your Git Organisation to be used for GitOps'
+        # Default value if no value is explicitly provided
+        default: 'yugaa22'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      repository:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Your Git Repository to be used for GitOps'
+        # Default value if no value is explicitly provided
+        default: 'cve-target'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      gitusername:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Your Git Username'
+        # Default value if no value is explicitly provided
+        default: 'yugaa22'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+      gittoken:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Your Git Token'
+        # Default value if no value is explicitly provided
+        default: '1232424'
+        # Input has to be provided for the workflow to run
+        required: false
+        # The data type of the input
+        type: string
+        
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
+  CONTAINER_REGISTRY: quay.io/opsmxpublic
+  
+jobs:
+  get-bom:
+    runs-on: ubuntu-latest
+    outputs:
+      cloudriver-version: ${{ steps.get-bom.outputs.cloudriver-version }}
+      deck-version: ${{ steps.get-bom.outputs.deck-version }}
+      echo-version: ${{ steps.get-bom.outputs.echo-version }}
+      fiat-version: ${{ steps.get-bom.outputs.fiat-version }}
+      front50-version: ${{ steps.get-bom.outputs.front50-version }}
+      gate-version: ${{ steps.get-bom.outputs.gate-version }}
+      igor-version: ${{ steps.get-bom.outputs.igor-version }}
+      kayenta-version: ${{ steps.get-bom.outputs.kayenta-version }}
+      orca-version: ${{ steps.get-bom.outputs.orca-version }}
+      rosco-version: ${{ steps.get-bom.outputs.rosco-version }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker clouddriver repo
+      uses: actions/checkout@v3
+    - id: get-bom
+      run: |
+            wget https://storage.googleapis.com/halconfig/bom/${{ inputs.version }}.yml 
+            
+            CloudriverImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.clouddriver.version')    
+            DeckImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.deck.version')
+            EchoImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.echo.version')
+            FiatImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.fiat.version')  
+            Front50ImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.front50.version')
+            GateImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.gate.version')
+            IgorImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.igor.version')
+            KayentaImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.kayenta.version')
+            OrcaImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.orca.version')
+            RoscoImageVersion=$(cat ${{ inputs.version }}.yml  | yq '.services.rosco.version')
+
+            echo "cloudriver-version=$CloudriverImageVersion" >> $GITHUB_OUTPUT
+            echo "deck-version=$DeckImageVersion" >> $GITHUB_OUTPUT
+            echo "echo-version=$EchoImageVersion" >> $GITHUB_OUTPUT
+            echo "fiat-version=$FiatImageVersion" >> $GITHUB_OUTPUT
+            echo "front50-version=$Front50ImageVersion" >> $GITHUB_OUTPUT
+            echo "gate-version=$GateImageVersion" >> $GITHUB_OUTPUT
+            echo "igor-version=$IgorImageVersion" >> $GITHUB_OUTPUT
+            echo "kayenta-version=$KayentaImageVersion" >> $GITHUB_OUTPUT
+            echo "orca-version=$OrcaImageVersion" >> $GITHUB_OUTPUT
+            echo "rosco-version=$RoscoImageVersion" >> $GITHUB_OUTPUT
+            
+  build-clouddriver:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    outputs:
+      clouddriver: ${{ steps.get-build-name.outputs.clouddriver }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker clouddriver repo
+      uses: actions/checkout@v3
+      with:
+        repository: spinnaker/clouddriver
+        ref: refs/tags/v${{ needs.get-bom.outputs.cloudriver-version }}
+    - uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 11
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"clouddriver"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.cloudriver-version }}-oss-ubuntu"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true clouddriver-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "clouddriver=$imageName" >> $GITHUB_OUTPUT
+            
+  build-deck:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    outputs:
+      deck: ${{ steps.get-build-name.outputs.deck }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker deck repo
+      uses: actions/checkout@v3
+      with:
+        repository: spinnaker/deck
+        ref: refs/tags/v${{ needs.get-bom.outputs.deck-version }}
+    - uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 11
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"deck"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.deck-version }}-oss-ubuntu"
+    - name: Build
+      run: |
+           # cp docker/ubi8/setupapache2.sh docker/setup-apache2.sh
+           # cp docker/ubi8/runapache2.sh docker/run-apache2.sh
+  
+             # To remove Special characters
+            # sed -i 's/\r//' docker/setup-apache2.sh
+             #sed -i 's/\r//' docker/run-apache2.sh
+             
+             ./gradlew build --no-daemon -PskipTests 
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "deck=$imageName" >> $GITHUB_OUTPUT
+
+  build-echo:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    outputs:
+      echo: ${{ steps.get-build-name.outputs.echo }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker echo repo
+      uses: actions/checkout@v3
+      with:
+        repository: spinnaker/echo
+        ref: refs/tags/v${{ needs.get-bom.outputs.echo-version }}
+    - uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 11
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"echo"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.echo-version }}-oss-ubuntu"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true echo-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "echo=$imageName" >> $GITHUB_OUTPUT
+
+  build-fiat:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    outputs:
+      fiat: ${{ steps.get-build-name.outputs.fiat }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker fiat repo
+      uses: actions/checkout@v3
+      with:
+        repository: spinnaker/fiat
+        ref: refs/tags/v${{ needs.get-bom.outputs.fiat-version }}
+    - uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 11
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"fiat"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.fiat-version }}-oss-ubuntu"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true fiat-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "fiat=$imageName" >> $GITHUB_OUTPUT
+
+
+  build-front50:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    outputs:
+      front50: ${{ steps.get-build-name.outputs.front50 }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker front50 repo
+      uses: actions/checkout@v3
+      with:
+        repository: spinnaker/front50
+        ref: refs/tags/v${{ needs.get-bom.outputs.front50-version }}
+    - uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 11
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"front50"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.front50-version }}-oss-ubuntu"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true front50-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "front50=$imageName" >> $GITHUB_OUTPUT
+
+  build-gate:
+    runs-on: ubuntu-latest    
+    needs: [get-bom]
+    outputs:
+      gate: ${{ steps.get-build-name.outputs.gate }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker gate repo
+      uses: actions/checkout@v3
+      with:
+        repository: spinnaker/gate
+        ref: refs/tags/v${{ needs.get-bom.outputs.gate-version }}
+    - uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 11
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"gate"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.gate-version }}-oss-ubuntu"
+    - name: Build
+      run: |
+         ./gradlew --no-daemon -PenableCrossCompilerPlugin=true gate-web:installDist -x test
+
+         #ls -ltra
+
+         #cp docker/custom-plugin.json .
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "gate=$imageName" >> $GITHUB_OUTPUT
+
+  build-igor:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    outputs:
+      igor: ${{ steps.get-build-name.outputs.igor }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker igor repo
+      uses: actions/checkout@v3
+      with:
+        repository: spinnaker/igor
+        ref: refs/tags/v${{ needs.get-bom.outputs.igor-version }}
+    - uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 11
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"igor"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.igor-version }}-oss-ubuntu"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true igor-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "igor=$imageName" >> $GITHUB_OUTPUT
+            
+
+  build-kayenta:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    outputs:
+      kayenta: ${{ steps.get-build-name.outputs.kayenta }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker kayenta repo
+      uses: actions/checkout@v3
+      with:
+        repository: spinnaker/kayenta
+        ref: refs/tags/v${{ needs.get-bom.outputs.kayenta-version }}
+    - uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 11
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"kayenta"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.kayenta-version }}-oss-ubuntu"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true kayenta-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "kayenta=$imageName" >> $GITHUB_OUTPUT
+
+
+  build-orca:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    outputs:
+      orca: ${{ steps.get-build-name.outputs.orca }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker orca repo
+      uses: actions/checkout@v3
+      with:
+        repository: spinnaker/orca
+        ref: refs/tags/v${{ needs.get-bom.outputs.orca-version }}
+    - uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 11
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"orca"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.orca-version }}-oss-ubuntu"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true orca-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "orca=$imageName" >> $GITHUB_OUTPUT
+
+
+  build-rosco:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    outputs:
+      rosco: ${{ steps.get-build-name.outputs.rosco }}
+    if: ${{ true }}
+    steps:
+    - name: Checkout spinnaker rosco repo
+      uses: actions/checkout@v3
+      with:
+        repository: spinnaker/rosco
+        ref: refs/tags/v${{ needs.get-bom.outputs.rosco-version }}
+    - uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 11
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare build variables
+      id: build_variables
+      run: |
+          echo ::set-output name=REPO::"rosco"
+          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-${{ inputs.version }}-v${{ needs.get-bom.outputs.rosco-version }}-oss-ubuntu"
+    - name: Build
+      run: ./gradlew --no-daemon -PenableCrossCompilerPlugin=true rosco-web:installDist -x test
+    - name: Login to Quay
+      uses: docker/login-action@v1
+      with:
+        registry: quay.io
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_KEY }}
+    - name: dockerBuildpush
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        push: true
+        tags: |
+          "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
+    - id: get-build-name
+      run: |
+            imageName=${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}
+            echo "rosco=$imageName" >> $GITHUB_OUTPUT  
+            
+  create-secret:
+    runs-on: ubuntu-latest
+    needs: [get-bom]
+    if: ${{ true }}
+    steps:
+    - name: Create Secret
+      env:
+          ACCESS_TOKEN: ${{ secrets.GIT_TOKEN }}
+          #ORG: ${{ inputs.organisation }}
+          #SECRET_NAME: GIT_USERNAME  # Replace with the name you want for the secret
+          #GITHUB_USERNAME: ${{inputs.gitusername}}
+          #GITHUB_REPO: ${{ inputs.repository }}
+          #LOCAL_FILE_PATH: "ninja-training-cluster.config"
+      run: |
+
+             # Base64 encode the content            
+             GITORG_CONTENT=$(echo $${{inputs.organisation}} | base64 )
+             GITUSERNAME_CONTENT=$(echo $${{inputs.gitusername}} | base64 )
+             GITTOKEN_CONTENT=$(echo $${{inputs.gittoken}} | base64 )
+             SPINVERSION_CONTENT=$(echo $${{inputs.version}} | base64 )
+             
+              # Fetch the public key for the repository
+              RESPONSE=$(curl -X GET -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${ACCESS_TOKEN}" "https://api.github.com/repos/${{ github.repository }}/actions/secrets/public-key")
+              
+              # Extract the key_id and key from the response
+              KEY_ID=$(echo "$RESPONSE" | jq -r '.key_id')
+              #KEY=$(echo "$RESPONSE" | jq -r '.key')
+
+              curl -X PUT "https://api.github.com/repos/${{ github.repository }}/actions/secrets/version"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${SPINVERSION_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
+
+              curl -X PUT "https://api.github.com/repos/${{ github.repository }}/actions/secrets/organisation"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITORG_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
+
+
+              curl -X PUT "https://api.github.com/repos/${{ github.repository }}/actions/secrets/GIT_USERNAME"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITUSERNAME_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
+
+
+              curl -X PUT "https://api.github.com/repos/${{ github.repository }}/actions/secrets/GIT_TOKEN"   -H "Authorization: token ${ACCESS_TOKEN}"   -H "Accept: application/vnd.github.v3+json"   -d "{\"encrypted_value\": \"${GITTOKEN_CONTENT}\",\"key_id\": \"${KEY_ID}\"}"
+
+
+
+
+
+  outputs:
+    runs-on: ubuntu-latest
+    needs: [build-clouddriver,build-deck,build-echo,build-fiat,build-front50,build-gate,build-igor,build-kayenta,build-orca,build-rosco,create-secret]
+    steps:
+    - name: Set up Git config
+      run: |
+          git config --global user.email "yugaa22@gmail.com"
+          git config --global user.name "yugaa22"
+
+    - name: Clone target repo
+      run: |
+
+      
+          git clone https://github.com/${{ inputs.organisation }}/${{ inputs.repository }} target-repo
+  
+    - name: Copy files     
+      working-directory: ./target-repo
+      run: | 
+          #ls -ltra
+           
+          #ls -ltra default/service-settings
+
+          yq eval '.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i default/service-settings/clouddriver.yml
+          yq eval '.artifactId |= "${{ needs.build-deck.outputs.deck }}"' -i default/service-settings/deck.yml
+          yq eval '.artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i default/service-settings/echo.yml
+          yq eval '.artifactId |= "${{ needs.build-fiat.outputs.fiat }}"' -i default/service-settings/fiat.yml
+          yq eval '.artifactId |= "${{ needs.build-front50.outputs.front50 }}"' -i default/service-settings/front50.yml
+          yq eval '.artifactId |= "${{ needs.build-gate.outputs.gate }}"' -i default/service-settings/gate.yml
+          yq eval '.artifactId |= "${{ needs.build-igor.outputs.igor }}"' -i default/service-settings/igor.yml
+          yq eval '.artifactId |= "${{ needs.build-kayenta.outputs.kayenta }}"' -i default/service-settings/kayenta.yml
+          yq eval '.artifactId |= "${{ needs.build-orca.outputs.orca }}"' -i default/service-settings/orca.yml
+          yq eval '.artifactId |= "${{ needs.build-rosco.outputs.rosco }}"' -i default/service-settings/rosco.yml
+
+          #yq eval '.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i default/service-settings/clouddriver-caching.yml
+          #yq eval '.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i default/service-settings/clouddriver-ro.yml
+          #yq eval '.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i default/service-settings/clouddriver-rw.yml
+          #yq eval '.artifactId |= "${{ needs.build-clouddriver.outputs.clouddriver }}"' -i default/service-settings/clouddriver-ro-deck.yml
+
+           # yq eval '.artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i default/service-settings/echo-worker.yml
+            #yq eval '.artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i default/service-settings/echo-scheduler.yml
+
+          
+          #echo artifactId: ${{ needs.build-clouddriver.outputs.clouddriver }} > default/service-settings/clouddriver.yml
+          
+          #echo artifactId: ${{ needs.build-deck.outputs.deck }} > default/service-settings/deck.yml
+          
+          #echo artifactId: ${{ needs.build-echo.outputs.echo }} > default/service-settings/echo.yml
+          
+          #echo artifactId: ${{ needs.build-fiat.outpus.fiat }} > default/service-settings/fiat.yml
+          
+          #echo artifactId: ${{ needs.build-front50.outputs.front50 }} > default/service-settings/front50.yml
+          
+          #echo artifactId: ${{ needs.build-gate.outputs.gate }} > default/service-settings/gate.yml
+          
+          #echo artifactId: ${{ needs.build-igor.outputs.igor }} > default/service-settings/igor.yml
+          
+          #echo artifactId: ${{ needs.build-kayenta.outputs.kayenta }} > default/service-settings/kayenta.yml
+          
+          #echo artifactId: ${{ needs.build-orca.outputs.orca }} > default/service-settings/orca.yml
+          
+          #echo artifactId: ${{ needs.build-rosco.outputs.rosco }} > default/service-settings/rosco.yml
+          
+          git add default/service-settings/
+          
+          git commit -m "updating 1.30.1 Branch images into service settings"
+          
+          #git remote set-url origin https://${{ inputs.gitusername }}:${{ secrets.GIT_TOKEN }}@github.com/${{ inputs.organisation }}/${{ inputs.repository }}
+
+          git remote set-url origin https://${{ inputs.gitusername }}:${{ inputs.gittoken }}@github.com/${{ inputs.organisation }}/${{ inputs.repository }}
+          
+          git push
+      #env:
+       #  GITHUB_TOKEN: ${{ inputs.gittoken }}
+    - run: echo "🍏 This job's status is ${{ job.status }}."
+    
+
+        
