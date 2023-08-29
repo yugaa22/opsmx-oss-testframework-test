@@ -46,8 +46,8 @@ jobs:
       - name: Setup OpsMx Helm chart and Install
         run: |
             git clone https://github.com/OpsMx/spinnaker-helm.git
-            
+            #helm template ${{ inputs.releasename}} spinnaker-helm/charts/spinnaker/ -f bom   -n ${{ inputs.namespace}} 
+            helm upgrade --install ${{ inputs.releasename}} spinnaker-helm/charts/spinnaker/ -f bom   -n ${{ inputs.namespace}} 
+            rm -rf spinnaker-helm
 
-            helm template ${{ inputs.releasename}} spinnaker-helm/charts/spinnaker/ -f bom   -n ${{ inputs.namespace}} 
-             
   
