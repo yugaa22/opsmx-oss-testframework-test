@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-oss-spin
+spec:
+  acme:
+    email: srinivas@opsmx.io
+    preferredChain: ""
+    privateKeySecretRef:
+      name: demo-authtls
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
