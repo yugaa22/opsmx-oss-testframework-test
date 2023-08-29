@@ -33,14 +33,6 @@ jobs:
         uses: azure/k8s-set-context@v1
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
-      - name: Set up Kubernetes
-        run: |
-
-          kubectl config view 
-          kubectl get ns  --kubeconfig=$kubeconfig
-
-          #kubectl get  ns --kubeconfig kubeconfig
-
       - name: Install Helm
         run: |
           curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
@@ -53,8 +45,12 @@ jobs:
           
       - name: Setup OpsMx Helm chart and Install
         run: |
-           
-           kubectl create ns ${{ inputs.namespace}} 
+            git clone https://github.com/OpsMx/spinnaker-helm.git
+            #cd spinnaker-helm/charts/spinnaker
+
+            helm template ${{ inputs.releasename}} spinnaker-helm/charts/spinnaker/ --timeout=900s -n  -n ${{ inputs.namespace}} 
+             
+            #kubectl create ns ${{ inputs.namespace}} 
 
            #kubectl -n ${{ inputs.namespace}} create secret generic opsmx-gitops-auth  --from-literal=gitcloneparam="https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ secrets.organisation }}/${{ secrets.repository }}.git" --from-literal=gituser="${{ secrets.GIT_USERNAME }}" --from-literal=gittoken='${{ secrets.GIT_TOKEN }}'
 
