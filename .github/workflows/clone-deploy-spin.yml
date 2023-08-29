@@ -29,9 +29,20 @@ jobs:
   OpsMx-Spinnaker:
     runs-on: ubuntu-latest
     steps:
-      - name: Display structure of downloaded files
-        run: |         
-           kubectl get ns  --kubeconfig=${{ secrets.KUBECONFIG }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Kubernetes
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        run: |
+          echo $KUBECONFIG > kubeconfig
+          mkdir -p ~/.kube
+          mv kubeconfig ~/.kube/config
+
+          kubectl get ns
+
+          kubectl get  ns --kubeconfig kubeconfig
 
       - name: Install Helm
         run: |
