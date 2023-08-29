@@ -46,7 +46,7 @@ jobs:
       working-directory: terraform-Script/aws/eks
       run: |
 
-          terraform init -reconfigure
+          terraform init 
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
