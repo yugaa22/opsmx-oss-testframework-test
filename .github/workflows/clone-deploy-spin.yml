@@ -30,14 +30,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Set up kubectl
-        uses: azure/setup-kubectl@v1
+        uses: azure/k8s-set-context@v1
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
       - name: Set up Kubernetes
         run: |
 
-          kubectl config view --kubeconfig=$kubeconfig
-
+          kubectl config view 
           kubectl get ns  --kubeconfig=$kubeconfig
 
           #kubectl get  ns --kubeconfig kubeconfig
