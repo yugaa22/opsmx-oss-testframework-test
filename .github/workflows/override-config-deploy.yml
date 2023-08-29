@@ -37,7 +37,7 @@ jobs:
     uses: yugaa22/opsmx-oss-testframework-test/.github/workflows/1_terraform_infra.yml@main
 
   OpsMx-Spinnaker:
-    if: ${{ github.event.inputs.cluster_create == 'Tdrue' }}
+    if: failure() && ${{ needs.OpsMx-terraform.outputs.kubeconfig  != 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
