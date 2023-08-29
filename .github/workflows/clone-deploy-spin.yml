@@ -36,9 +36,9 @@ jobs:
       - name: Set up Kubernetes
         run: |
 
+          kubectl config view --kubeconfig=$kubeconfig
 
-
-          kubectl get ns
+          kubectl get ns  --kubeconfig=$kubeconfig
 
           #kubectl get  ns --kubeconfig kubeconfig
 
