@@ -562,9 +562,9 @@ jobs:
           yq eval '.halyard.additionalServiceSettings."echo-scheduler.yml".artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i bom
           yq eval '.halyard.additionalServiceSettings."echo-worker.yml".artifactId |= "${{ needs.build-echo.outputs.echo }}"' -i bom
 
-          yq eval '.halyard.image.repository' |= "${{ needs.build-halyard.outputs.repo }}"' -i bom
+          yq eval '.halyard.image.repository |= "${{ needs.build-halyard.outputs.repo }}"' -i bom
 
-          yq eval '.halyard.image.tag' |= "${{ needs.build-halyard.outputs.halyardtag }}"' -i bom
+          yq eval '.halyard.image.tag |= "${{ needs.build-halyard.outputs.halyardtag }}"' -i bom
 
            echo  $date
            
